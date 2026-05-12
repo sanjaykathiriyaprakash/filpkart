@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+  --color-flipkart-blue: #2874f0;
+  --color-flipkart-yellow: #f0c14b;
+  --color-flipkart-bg: #f1f3f6;
+  --color-flipkart-text: #212121;
+}
+
+body {
+  background-color: var(--color-flipkart-bg);
+  color: var(--color-flipkart-text);
+  margin: 0;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
