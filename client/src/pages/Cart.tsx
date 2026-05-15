@@ -1,14 +1,18 @@
 import { useSelector, useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import type { RootState } from '../store/store';
-import { removeFromCart, clearCart } from '../store/slices/cartSlice';
-import { Trash2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { removeFromCart, clearCart, incrementQuantity, decrementQuantity } from '../store/slices/cartSlice';
 
 export default function Cart() {
     const { items } = useSelector((state: RootState) => state.cart);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const totalAmount = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+
+    const handlePlaceOrder = () => {
+        navigate('/checkout');
+    };
 
     if (items.length === 0) {
         return (
@@ -40,25 +44,39 @@ export default function Cart() {
                         {items.map((item) => (
                             <div key={item.product.id} className="flex flex-col sm:flex-row border-b border-gray-100 pb-6 group">
                                 <div className="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0">
-                                    <img src={item.product.images[0]} alt={item.product.title} className="w-full h-full object-cover rounded shadow-sm border border-gray-50 group-hover:shadow-md transition-shadow" />
+                                    <img src={item.product.images[0] || item.product.thumbnail} alt={item.product.title} className="w-full h-full object-contain rounded shadow-sm border border-gray-50 group-hover:shadow-md transition-shadow" />
                                 </div>
                                 <div className="mt-4 sm:mt-0 sm:ml-6 flex-1">
                                     <h3 className="text-lg font-semibold text-gray-800 group-hover:text-[#2874f0] line-clamp-2 transition-colors">{item.product.title}</h3>
                                     <div className="text-sm text-gray-500 mt-1">Seller: Appario Retail</div>
                                     <div className="mt-3 flex items-center space-x-3">
-                                        <span className="text-2xl font-bold text-gray-900">₹{item.product.price}</span>
-                                        <span className="text-sm text-gray-500 line-through">₹{Math.floor(item.product.price * 1.5)}</span>
+                                        <span className="text-2xl font-bold text-gray-900">₹{Math.floor(Number(item.product.price) * 82)}</span>
+                                        <span className="text-sm text-gray-500 line-through">₹{Math.floor(Number(item.product.price) * 82 * 1.5)}</span>
                                         <span className="text-sm font-bold text-green-600 text-green-500">33% Off</span>
                                     </div>
                                     <div className="mt-4 flex items-center space-x-6">
-                                        <div className="flex items-center space-x-2 bg-gray-100 p-1 rounded">
-                                            <span className="px-2 text-sm text-gray-600 font-bold">Qty: {item.quantity}</span>
+                                        <div className="flex items-center space-x-3">
+                                            <button
+                                                onClick={() => dispatch(decrementQuantity(item.product.id))}
+                                                className="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 font-bold text-lg hover:bg-gray-100 transition-colors"
+                                            >
+                                                -
+                                            </button>
+                                            <div className="w-11 h-7 border border-gray-300 flex items-center justify-center text-sm font-semibold text-gray-800">
+                                                {item.quantity}
+                                            </div>
+                                            <button
+                                                onClick={() => dispatch(incrementQuantity(item.product.id))}
+                                                className="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 font-bold text-lg hover:bg-gray-100 transition-colors"
+                                            >
+                                                +
+                                            </button>
                                         </div>
                                         <button
                                             onClick={() => dispatch(removeFromCart(item.product.id))}
-                                            className="text-gray-800 font-semibold hover:text-red-500 flex flex-items items-center space-x-1"
+                                            className="text-gray-800 font-semibold hover:text-red-500 hover:underline flex flex-items items-center space-x-1 uppercase text-sm tracking-wide ml-4"
                                         >
-                                            <Trash2 className="w-4 h-4" /> <span>Remove</span>
+                                            <span>REMOVE</span>
                                         </button>
                                     </div>
                                 </div>
@@ -67,7 +85,9 @@ export default function Cart() {
                     </div>
 
                     <div className="mt-6 flex justify-end">
-                        <button className="bg-[#fb641b] text-white font-semibold py-3 px-12 rounded-sm shadow-md hover:bg-[#f35200] transition-colors transform hover:-translate-y-0.5">
+                        <button
+                            onClick={handlePlaceOrder}
+                            className="bg-[#fb641b] text-white font-semibold py-3 px-12 rounded-sm shadow-md hover:bg-[#f35200] transition-colors transform hover:-translate-y-0.5">
                             PLACE ORDER
                         </button>
                     </div>

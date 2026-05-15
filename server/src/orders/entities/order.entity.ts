@@ -7,6 +7,8 @@ export enum OrderStatus {
     SHIPPED = 'SHIPPED',
     DELIVERED = 'DELIVERED',
     CANCELLED = 'CANCELLED',
+    RETURNED = 'RETURNED',
+    REFUNDED = 'REFUNDED',
 }
 
 @Entity('orders')
@@ -20,6 +22,9 @@ export class Order {
     @Column('jsonb')
     products: any[];
 
+    @Column({ nullable: true, type: 'jsonb' })
+    shippingAddress: any;
+
     @Column('decimal')
     totalAmount: number;
 
@@ -32,6 +37,15 @@ export class Order {
         default: OrderStatus.PENDING,
     })
     orderStatus: OrderStatus;
+
+    @Column({ nullable: true })
+    trackingNumber: string;
+
+    @Column({ nullable: true })
+    deliveryStatus: string;
+
+    @Column({ nullable: true })
+    invoiceId: string;
 
     @CreateDateColumn()
     createdAt: Date;

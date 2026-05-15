@@ -163,13 +163,15 @@ The platform  support only customer functionalities similar to Flipkart.
 - Cash on Delivery
 
 ## Payment Gateway
-- Razorpay
+- Stripe (Test Mode with dummy card flow)
 
 ## Payment Features
-- Secure payment flow
-- Payment verification
-- Refund APIs
+- Stripe PaymentIntent creation
+- Dummy card form (test cards included)
+- Payment status persistence (PENDING → SUCCEEDED → REFUNDED)
+- Invoice generation and download
 - Transaction history
+- Refund handling
 
 ---
 

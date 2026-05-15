@@ -33,6 +33,18 @@ export class User {
     @Column({ nullable: true })
     phone: string;
 
+    @Column({ nullable: true })
+    refreshToken: string;
+
+    @Column({ nullable: true })
+    resetPasswordToken: string;
+
+    @Column({ default: false })
+    isVerified: boolean;
+
+    @Column({ nullable: true })
+    otp: string;
+
     @CreateDateColumn()
     createdAt: Date;
 

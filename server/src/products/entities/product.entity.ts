@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Category } from './category.entity';
+import { Brand } from './brand.entity';
 
 @Entity('products')
 export class Product {
@@ -11,11 +13,17 @@ export class Product {
     @Column('text')
     description: string;
 
-    @Column()
-    category: string;
+    @ManyToOne(() => Category, { nullable: true, onDelete: 'SET NULL' })
+    category: Category;
 
-    @Column()
-    brand: string;
+    @ManyToOne(() => Brand, { nullable: true, onDelete: 'SET NULL' })
+    brand: Brand;
+
+    @Column({ unique: true, nullable: true })
+    sku: string;
+
+    @Column('jsonb', { nullable: true, default: [] })
+    variants: any[];
 
     @Column('decimal')
     price: number;

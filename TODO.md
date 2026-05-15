@@ -3,13 +3,13 @@
 # Phase 1 – Project Setup
 
 ## Repository & Environment
-- [ ] Create Git repository
-- [ ] Setup frontend project (Next.js / React)
-- [ ] Setup backend project (Node.js + Express)
-- [ ] Setup TypeScript
-- [ ] Configure ESLint & Prettier
-- [ ] Setup environment variables
-- [ ] Setup Docker
+- [x] Create Git repository
+- [x] Setup frontend project (Next.js / React)
+- [x] Setup backend project (Node.js + Express)
+- [x] Setup TypeScript
+- [x] Configure ESLint & Prettier
+- [x] Setup environment variables
+- [x] Setup Docker
 - [ ] Setup GitHub Actions CI/CD
 - [ ] Configure development & production environments
 
@@ -18,19 +18,19 @@
 # Phase 2 – Database Design
 
 ## Database Setup
-- [ ] Setup MongoDB / PostgreSQL
-- [ ] Create database connection module
-- [ ] Create migrations / schemas
+- [x] Setup MongoDB / PostgreSQL
+- [x] Create database connection module
+- [x] Create migrations / schemas
 
 ## Database Models
-- [ ] User model
-- [ ] Address model
-- [ ] Product model
-- [ ] Category model
-- [ ] Brand model
-- [ ] Cart model
-- [ ] Wishlist model
-- [ ] Order model
+- [x] User model
+- [x] Address model
+- [x] Product model
+- [x] Category model
+- [x] Brand model
+- [x] Cart model
+- [x] Wishlist model
+- [x] Order model
 - [ ] Payment model
 - [ ] Coupon model
 - [ ] Review model
@@ -42,15 +42,15 @@
 # Phase 3 – Authentication & User Management
 
 ## Authentication APIs
-- [ ] User registration API
-- [ ] User login API
-- [ ] Logout API
-- [ ] Refresh token API
-- [ ] Forgot password API
-- [ ] Reset password API
-- [ ] Email verification
-- [ ] OTP verification
-- [ ] Google login integration
+- [x] User registration API
+- [x] User login API
+- [x] Logout API
+- [x] Refresh token API
+- [x] Forgot password API
+- [x] Reset password API
+- [x] Email verification
+- [x] OTP verification
+- [x] Google login integration
 
 ## User Features
 - [ ] User profile page
@@ -62,8 +62,8 @@
 - [ ] Wishlist management
 
 ## Security
-- [ ] JWT authentication
-- [ ] Password hashing
+- [x] JWT authentication
+- [x] Password hashing
 - [ ] Role-based access control
 - [ ] Rate limiting
 - [ ] API validation
@@ -75,70 +75,70 @@
 # Phase 4 – Product Management
 
 ## Product APIs
-- [ ] Create product API
-- [ ] Update product API
-- [ ] Delete product API
-- [ ] Get product details API
-- [ ] Product listing API
+- [x] Create product API
+- [x] Update product API
+- [x] Delete product API
+- [x] Get product details API
+- [x] Product listing API
 
 ## Product Features
-- [ ] Product categories
-- [ ] Subcategories
-- [ ] Brand management
-- [ ] Product variants
-- [ ] Product inventory
-- [ ] SKU management
-- [ ] Upload product images
-- [ ] Product gallery
+- [x] Product categories
+- [x] Subcategories
+- [x] Brand management
+- [x] Product variants
+- [x] Product inventory
+- [x] SKU management
+- [x] Upload product images
+- [x] Product gallery
 
 ## Search & Filtering
-- [ ] Search products
-- [ ] Filter by category
-- [ ] Filter by brand
-- [ ] Filter by price
-- [ ] Filter by rating
-- [ ] Sorting options
+- [x] Search products
+- [x] Filter by category
+- [x] Filter by brand
+- [x] Filter by price
+- [x] Filter by rating
+- [x] Sorting options
 
 ## Product Reviews
-- [ ] Add review
-- [ ] Update review
-- [ ] Delete review
-- [ ] Ratings system
+- [x] Add review
+- [x] Update review
+- [x] Delete review
+- [x] Ratings system
 
 ---
 
 # Phase 5 – Cart & Wishlist
 
 ## Cart Features
-- [ ] Add to cart
-- [ ] Remove from cart
-- [ ] Update quantity
+- [x] Add to cart
+- [x] Remove from cart
+- [x] Update quantity
 - [ ] Save for later
 - [ ] Guest cart support
 - [ ] Persistent cart after login
 
 ## Wishlist Features
-- [ ] Add to wishlist
-- [ ] Remove from wishlist
-- [ ] Move wishlist items to cart
+- [x] Add to wishlist
+- [x] Remove from wishlist
+- [x] Move wishlist items to cart
 
 ---
 
 # Phase 6 – Checkout & Payments
 
 ## Checkout
-- [ ] Checkout page
-- [ ] Address selection
-- [ ] Shipping calculation
-- [ ] Tax calculation
+- [x] Checkout page
+- [x] Address selection
+- [x] Shipping calculation
+- [x] Tax calculation
 - [ ] Coupon system
-- [ ] Order summary
+- [x] Order summary
 
 ## Payment Integration
 - [ ] Razorpay integration
-- [ ] Stripe integration
+- [x] Stripe integration (Test Mode)
 - [ ] COD support
-- [ ] Payment verification
+- [x] Payment verification
 - [ ] Refund handling
 
 ---
@@ -146,17 +146,17 @@
 # Phase 7 – Order Management
 
 ## Order APIs
-- [ ] Create order
-- [ ] Get order details
-- [ ] Cancel order
-- [ ] Return order
-- [ ] Refund order
+- [x] Create order
+- [x] Get order details
+- [x] Cancel order
+- [x] Return order
+- [x] Refund order
 
 ## Order Features
-- [ ] Order tracking
-- [ ] Delivery status updates
-- [ ] Invoice generation
-- [ ] Email notifications
+- [x] Order tracking
+- [x] Delivery status updates
+- [x] Invoice generation
+- [x] Email notifications
 
 ---
 
@@ -192,19 +192,19 @@
 # Phase 10 – Frontend UI Pages
 
 ## Public Pages
-- [ ] Home page
-- [ ] Product listing page
-- [ ] Product details page
-- [ ] Search page
+- [x] Home page
+- [x] Product listing page
+- [x] Product details page
+- [x] Search page
 
 ## User Pages
-- [ ] Login page
-- [ ] Register page
+- [x] Login page
+- [x] Register page
 - [ ] Profile page
-- [ ] Cart page
-- [ ] Wishlist page
-- [ ] Checkout page
-- [ ] Orders page
+- [x] Cart page
+- [x] Wishlist page
+- [x] Checkout page
+- [x] Orders page
 
 ## Admin Pages
 - [ ] Admin dashboard
@@ -259,7 +259,7 @@
 # Phase 14 – Testing
 
 ## Backend Testing
-- [ ] Unit testing
+- [x] Unit testing
 - [ ] API testing
 - [ ] Authentication testing
 
