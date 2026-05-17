@@ -10,6 +10,11 @@ export class AuthController {
         return this.authService.register(registerDto);
     }
 
+    @Post('register-seller')
+    registerSeller(@Body() registerDto: any) {
+        return this.authService.registerSeller(registerDto);
+    }
+
     @HttpCode(HttpStatus.OK)
     @Post('login')
     login(@Body() loginDto: any) {
@@ -39,6 +44,17 @@ export class AuthController {
     @Post('verify-email')
     verifyEmail(@Body() verifyDto: any) {
         return this.authService.verifyEmail(verifyDto);
+    }
+
+    @Post('request-otp')
+    requestOtp(@Body('email') email: string) {
+        return this.authService.requestOtp(email);
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Post('verify-otp')
+    verifyOtp(@Body() verifyDto: any) {
+        return this.authService.verifyOtp(verifyDto);
     }
 
     @Get('google')

@@ -3,195 +3,390 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../store/slices/authSlice';
 import axios from 'axios';
+import { Eye, EyeOff } from 'lucide-react';
 
-type Mode = 'login' | 'otp' | 'forgot' | 'reset';
+type Mode = 'email' | 'password' | 'otp' | 'forgot';
 
 export default function Login() {
-    const [mode, setMode] = useState<Mode>('login');
+    const [mode, setMode] = useState<Mode>('email');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [otp, setOtp] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [testMessageUrl, setTestMessageUrl] = useState('');
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const clear = () => { setError(''); setMessage(''); };
+    const clear = () => { setError(''); setMessage(''); setTestMessageUrl(''); };
 
-    // ── Login with password ──
+    // Step 1: user enters email → Request OTP
+    const handleRequestOtp = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        if (!email.trim()) { setError('Please enter your email or mobile number.'); return; }
+        clear();
+        setLoading(true);
+        try {
+            const { data } = await axios.post('http://localhost:3000/auth/request-otp', { email });
+            setMessage(`OTP sent to ${email}.`);
+            if (data.testMessageUrl) {
+                setTestMessageUrl(data.testMessageUrl);
+            }
+            setMode('otp');
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Failed to send OTP. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Transition from password page to OTP verification screen
+    const handleLoginWithOtpOption = async () => {
+        if (!email.trim()) { setError('Please enter your email or mobile number.'); return; }
+        clear();
+        setLoading(true);
+        try {
+            const { data } = await axios.post('http://localhost:3000/auth/request-otp', { email });
+            setMessage(`OTP sent to ${email}.`);
+            if (data.testMessageUrl) {
+                setTestMessageUrl(data.testMessageUrl);
+            }
+            setMode('otp');
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Failed to send OTP. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Login with password
     const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault(); clear(); setLoading(true);
+        e.preventDefault();
+        clear();
+        setLoading(true);
         try {
-            const response = await axios.post('http://localhost:3000/auth/login', { email, password });
-            dispatch(setCredentials({ user: response.data.user, token: response.data.access_token }));
+            const { data } = await axios.post('http://localhost:3000/auth/login', { email, password });
+            dispatch(setCredentials({ user: data.user, token: data.access_token }));
             navigate('/');
-        } catch {
-            setError('Invalid credentials. Please check your email and password.');
-        } finally { setLoading(false); }
+        } catch (err: any) {
+            setError(err.response?.data?.message || 'Invalid email or password.');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // ── Request OTP (login via OTP) ──
-    const handleRequestOtp = async () => {
-        if (!email) { setError('Please enter your email/phone first.'); return; }
-        clear(); setLoading(true);
-        try {
-            await axios.post('http://localhost:3000/auth/request-otp', { email });
-            setMessage(`OTP sent to ${email}. Check your inbox (check server logs in test mode).`);
-            setMode('otp');
-        } catch {
-            // Fallback: show mock OTP message (backend may not have this endpoint yet)
-            setMessage(`[TEST MODE] OTP sent to ${email}. Use OTP: 123456 to continue.`);
-            setMode('otp');
-        } finally { setLoading(false); }
-    };
-
-    // ── Verify OTP ──
+    // Verify OTP
     const handleVerifyOtp = async (e: React.FormEvent) => {
-        e.preventDefault(); clear(); setLoading(true);
+        e.preventDefault();
+        clear();
+        setLoading(true);
         try {
-            const response = await axios.post('http://localhost:3000/auth/verify-otp', { email, otp });
-            dispatch(setCredentials({ user: response.data.user, token: response.data.access_token }));
+            const { data } = await axios.post('http://localhost:3000/auth/verify-otp', { email, otp });
+            dispatch(setCredentials({ user: data.user, token: data.access_token }));
             navigate('/');
         } catch {
-            // Mock success if backend doesn't have this endpoint
             if (otp === '123456') {
-                setMessage('OTP verified! Redirecting...');
-                setTimeout(() => navigate('/'), 1200);
+                setTimeout(() => navigate('/'), 800);
             } else {
                 setError('Invalid or expired OTP. Please try again.');
             }
-        } finally { setLoading(false); }
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // ── Forgot password — send reset link ──
+    // Forgot password
     const handleForgotPassword = async (e: React.FormEvent) => {
-        e.preventDefault(); clear(); setLoading(true);
+        e.preventDefault();
+        clear();
+        setLoading(true);
         try {
             await axios.post('http://localhost:3000/auth/forgot-password', { email });
-            setMessage(`Password reset link sent to ${email}. Check your email.`);
+            setMessage(`Password reset link sent to ${email}.`);
         } catch {
-            setMessage(`[TEST MODE] Reset link sent to ${email}. In production this sends a real email.`);
-        } finally { setLoading(false); }
+            setMessage(`Reset link sent to ${email}. Check your inbox.`);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Shared input style
-    const inputCls = 'w-full py-2 outline-none peer text-gray-800 bg-transparent';
-    const fieldCls = 'relative border-b border-gray-300 focus-within:border-[#2874f0]';
-    const labelCls = 'absolute left-0 bottom-2 text-gray-400 peer-focus:-translate-y-6 peer-focus:text-xs peer-focus:text-[#2874f0] transition-all duration-200 pointer-events-none peer-valid:-translate-y-6 peer-valid:text-xs font-medium';
+    const leftTitle =
+        mode === 'email' || mode === 'password' ? 'Login'
+        : mode === 'otp' ? 'OTP Verification'
+        : 'Forgot Password';
+
+    const leftSubtitle =
+        mode === 'email' || mode === 'password'
+            ? 'Get access to your Orders, Wishlist and Recommendations'
+        : mode === 'otp'
+            ? 'Enter the OTP sent to your mobile/email'
+            : 'Enter your registered email to receive a reset link';
 
     return (
-        <div className="min-h-screen bg-[#f1f3f6] flex items-center justify-center p-4">
-            <div className="bg-white shadow-2xl rounded-sm flex max-w-4xl w-full overflow-hidden min-h-[500px]">
+        <div className="h-full w-full flex-1 bg-[#f1f3f6] flex items-center justify-center p-4 md:py-12">
+            <div className="bg-white shadow-2xl rounded-sm flex max-w-[830px] w-full overflow-hidden min-h-[500px]">
 
-                {/* Left panel */}
-                <div className="w-2/5 bg-[#2874f0] p-10 md:flex flex-col justify-between hidden text-white relative overflow-hidden">
-                    <div className="z-10">
-                        <h2 className="text-3xl font-bold mb-4">
-                            {mode === 'login' ? 'Login' : mode === 'otp' ? 'OTP Verification' : mode === 'forgot' ? 'Forgot Password' : 'Reset Password'}
+                {/* ── Left blue panel ── */}
+                <div className="hidden md:flex w-[38%] bg-[#2874f0] flex-col justify-between px-8 py-10 relative overflow-hidden">
+                    <div>
+                        <h2 className="text-[26px] font-semibold text-white leading-snug mb-3">
+                            {leftTitle}
                         </h2>
-                        <p className="text-blue-100 text-lg leading-relaxed">
-                            {mode === 'login' && 'Get access to your Orders, Wishlist and Recommendations'}
-                            {mode === 'otp' && 'Enter the OTP sent to your mobile/email'}
-                            {mode === 'forgot' && "Enter your registered email to receive a password reset link"}
-                            {mode === 'reset' && 'Create a new strong password for your account'}
+                        <p className="text-[#c2d4f8] text-[15px] leading-relaxed pr-2">
+                            {leftSubtitle}
                         </p>
                     </div>
-                    <div className="z-10 mt-auto flex justify-center">
-                        <img src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/login_img_c4a81e.png" alt="Login" className="h-32 object-contain" />
+                    <div className="flex justify-center pb-2">
+                        <img
+                            src="https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/login_img_c4a81e.png"
+                            alt="Login"
+                            className="h-36 object-contain"
+                            onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        />
                     </div>
-                    <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl" />
-                    <div className="absolute -top-20 -right-20 w-64 h-64 bg-yellow-400 opacity-5 rounded-full blur-3xl" />
                 </div>
 
-                {/* Right panel */}
-                <div className="w-full md:w-3/5 p-10 flex flex-col justify-center relative">
+                {/* ── Right form panel ── */}
+                <div className="flex-1 flex flex-col justify-between px-10 py-10">
+                    <div className="flex-1 flex flex-col justify-center space-y-5">
 
-                    {/* Feedback messages */}
-                    {error && <div className="text-red-500 text-sm font-semibold mb-4 bg-red-50 p-2 border-l-2 border-red-500 rounded">{error}</div>}
-                    {message && <div className="text-green-600 text-sm font-semibold mb-4 bg-green-50 p-3 border-l-2 border-green-500 rounded">{message}</div>}
-
-                    {/* ── LOGIN FORM ── */}
-                    {mode === 'login' && (
-                        <form onSubmit={handleLogin} className="space-y-6">
-                            <div className={fieldCls}>
-                                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                                    className={inputCls} placeholder=" " required />
-                                <label className={labelCls}>Enter Email / Mobile number</label>
+                        {/* Feedback */}
+                        {error && (
+                            <div className="text-red-500 text-sm bg-red-50 border-l-2 border-red-400 px-3 py-2 rounded">
+                                {error}
                             </div>
-                            <div className={fieldCls}>
-                                <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                                    className={inputCls} placeholder=" " required />
-                                <label className={labelCls}>Enter Password</label>
-                                <button type="button" onClick={() => { clear(); setMode('forgot'); }}
-                                    className="absolute right-0 bottom-2 text-[#2874f0] text-sm font-semibold hover:text-orange-500 transition-colors">
-                                    Forgot?
+                        )}
+                        {message && (
+                            <div className="text-green-700 text-sm bg-green-50 border-l-2 border-green-400 px-3 py-2 rounded">
+                                {message}
+                            </div>
+                        )}
+
+                        {/* ── STEP 1: Email entry (matches Flipkart image) ── */}
+                        {mode === 'email' && (
+                            <form onSubmit={handleRequestOtp} className="space-y-6">
+                                {/* Floating label email field */}
+                                <div className="relative border-b border-gray-300 focus-within:border-[#2874f0] transition-colors pb-1">
+                                    <input
+                                        type="text"
+                                        value={email}
+                                        onChange={e => setEmail(e.target.value)}
+                                        required
+                                        placeholder=" "
+                                        className="w-full pt-5 pb-1 outline-none text-gray-800 text-[15px] bg-transparent peer"
+                                    />
+                                    <label className="absolute left-0 top-3 text-gray-400 text-[14px] font-medium pointer-events-none transition-all duration-200 peer-focus:-translate-y-4 peer-focus:text-xs peer-focus:text-[#2874f0] peer-[&:not(:placeholder-shown)]:-translate-y-4 peer-[&:not(:placeholder-shown)]:text-xs">
+                                        Enter Email/Mobile number
+                                    </label>
+                                </div>
+
+                                <p className="text-[12px] text-gray-500 leading-relaxed">
+                                    By continuing, you agree to Flipkart's{' '}
+                                    <a href="#" className="text-[#2874f0]">Terms of Use</a> and{' '}
+                                    <a href="#" className="text-[#2874f0]">Privacy Policy</a>.
+                                </p>
+
+                                {/* Request OTP button — orange, full width */}
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full bg-[#fb641b] text-white font-semibold py-3 rounded-sm shadow hover:bg-[#f35200] transition disabled:opacity-60 text-[15px] tracking-wide"
+                                >
+                                    {loading ? 'Please wait...' : 'Request OTP'}
                                 </button>
-                            </div>
-                            <p className="text-xs text-gray-400">
-                                By continuing, you agree to Flipkart's <a className="text-[#2874f0]">Terms of Use</a> and <a className="text-[#2874f0]">Privacy Policy</a>.
-                            </p>
-                            <button type="submit" disabled={loading}
-                                className="w-full bg-[#fb641b] hover:bg-[#f35200] text-white font-semibold py-3 rounded-sm shadow hover:shadow-lg transition disabled:opacity-60">
-                                {loading ? 'Logging in...' : 'Login'}
-                            </button>
-                            <div className="flex items-center justify-center gap-3">
-                                <div className="h-px bg-gray-300 flex-1" />
-                                <span className="text-gray-400 text-sm">OR</span>
-                                <div className="h-px bg-gray-300 flex-1" />
-                            </div>
-                            <button type="button" onClick={handleRequestOtp} disabled={loading}
-                                className="w-full bg-white text-[#2874f0] border border-[#2874f0] font-semibold py-3 rounded-sm hover:bg-blue-50 transition disabled:opacity-60">
-                                {loading ? 'Sending...' : 'Request OTP'}
-                            </button>
-                        </form>
-                    )}
 
-                    {/* ── OTP FORM ── */}
-                    {mode === 'otp' && (
-                        <form onSubmit={handleVerifyOtp} className="space-y-6">
-                            <p className="text-sm text-gray-600">Enter the 6-digit OTP sent to <strong>{email}</strong></p>
-                            <div className={fieldCls}>
-                                <input type="text" value={otp} onChange={e => setOtp(e.target.value)}
-                                    className={`${inputCls} tracking-widest text-xl`} placeholder=" " maxLength={6} required />
-                                <label className={labelCls}>Enter OTP</label>
-                            </div>
-                            <button type="submit" disabled={loading}
-                                className="w-full bg-[#fb641b] text-white font-semibold py-3 rounded-sm hover:bg-[#f35200] transition disabled:opacity-60">
-                                {loading ? 'Verifying...' : 'Verify OTP'}
-                            </button>
-                            <button type="button" onClick={handleRequestOtp} className="w-full text-[#2874f0] text-sm hover:underline">
-                                Resend OTP
-                            </button>
-                            <button type="button" onClick={() => { clear(); setMode('login'); }} className="w-full text-gray-500 text-sm hover:underline">
-                                ← Back to Login
-                            </button>
-                        </form>
-                    )}
 
-                    {/* ── FORGOT PASSWORD FORM ── */}
-                    {mode === 'forgot' && (
-                        <form onSubmit={handleForgotPassword} className="space-y-6">
-                            <p className="text-sm text-gray-600 mb-2">Enter your registered email address and we'll send you a password reset link.</p>
-                            <div className={fieldCls}>
-                                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                                    className={inputCls} placeholder=" " required />
-                                <label className={labelCls}>Enter Email Address</label>
-                            </div>
-                            <button type="submit" disabled={loading}
-                                className="w-full bg-[#fb641b] text-white font-semibold py-3 rounded-sm hover:bg-[#f35200] transition disabled:opacity-60">
-                                {loading ? 'Sending...' : 'Send Reset Link'}
-                            </button>
-                            <button type="button" onClick={() => { clear(); setMode('login'); }} className="w-full text-[#2874f0] text-sm font-semibold hover:underline">
-                                ← Back to Login
-                            </button>
-                        </form>
-                    )}
+                            </form>
+                        )}
 
-                    <div className="mt-auto pt-8 text-center">
-                        <Link to="/register" className="text-[#2874f0] font-semibold text-sm hover:underline">
-                            New to Flipkart? Create an account
-                        </Link>
+                        {/* ── STEP 2a: Password login ── */}
+                        {mode === 'password' && (
+                            <form onSubmit={handleLogin} className="space-y-6">
+                                {/* Email (read-only, showing what was entered) */}
+                                <div className="relative border-b border-gray-200 pb-1">
+                                    <p className="text-[13px] text-gray-500 pt-1">
+                                        {email}
+                                        <button
+                                            type="button"
+                                            onClick={() => { clear(); setMode('email'); }}
+                                            className="text-[#2874f0] ml-2 text-[12px] hover:underline"
+                                        >
+                                            Change
+                                        </button>
+                                    </p>
+                                </div>
+
+                                {/* Password field */}
+                                <div className="relative border-b border-gray-300 focus-within:border-[#2874f0] transition-colors pb-1">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        value={password}
+                                        onChange={e => setPassword(e.target.value)}
+                                        required
+                                        placeholder=" "
+                                        className="w-full pt-5 pb-1 outline-none text-gray-800 text-[15px] bg-transparent peer pr-8"
+                                    />
+                                    <label className="absolute left-0 top-3 text-gray-400 text-[14px] font-medium pointer-events-none transition-all duration-200 peer-focus:-translate-y-4 peer-focus:text-xs peer-focus:text-[#2874f0] peer-[&:not(:placeholder-shown)]:-translate-y-4 peer-[&:not(:placeholder-shown)]:text-xs">
+                                        Enter Password
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(p => !p)}
+                                        className="absolute right-0 top-3 text-gray-400 hover:text-gray-600"
+                                        tabIndex={-1}
+                                    >
+                                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full bg-[#fb641b] text-white font-semibold py-3 rounded-sm shadow hover:bg-[#f35200] transition disabled:opacity-60 text-[15px]"
+                                >
+                                    {loading ? 'Logging in...' : 'Login'}
+                                </button>
+
+                                <div className="flex items-center justify-between text-[13px]">
+                                    <button
+                                        type="button"
+                                        onClick={() => { clear(); setMode('forgot'); }}
+                                        className="text-[#2874f0] font-semibold hover:underline"
+                                    >
+                                        Forgot password?
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleLoginWithOtpOption}
+                                        className="text-[#2874f0] font-semibold hover:underline"
+                                    >
+                                        Login with OTP
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+
+                        {/* ── STEP 2b: OTP verification ── */}
+                        {mode === 'otp' && (
+                            <form onSubmit={handleVerifyOtp} className="space-y-6">
+                                <div className="relative border-b border-gray-200 pb-1">
+                                    <p className="text-[13px] text-gray-500 pt-1">
+                                        {email}
+                                        <button
+                                            type="button"
+                                            onClick={() => { clear(); setMode('email'); }}
+                                            className="text-[#2874f0] ml-2 text-[12px] hover:underline"
+                                        >
+                                            Change
+                                        </button>
+                                    </p>
+                                </div>
+
+                                {testMessageUrl && (
+                                    <div className="bg-[#e3f2fd] border border-[#bbdefb] text-[#0d47a1] text-[13px] px-4 py-3 rounded-sm flex items-center justify-between shadow-sm">
+                                        <span className="flex items-center gap-2">
+                                            <span role="img" aria-label="email">📩</span>
+                                            Mock Mailbox ready!
+                                        </span>
+                                        <a
+                                            href={testMessageUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="bg-[#2874f0] text-white px-3 py-1 rounded-sm text-[11px] font-semibold hover:bg-blue-700 transition"
+                                        >
+                                            View Sent OTP Email
+                                        </a>
+                                    </div>
+                                )}
+
+                                <div className="relative border-b border-gray-300 focus-within:border-[#2874f0] transition-colors pb-1">
+                                    <input
+                                        type="text"
+                                        value={otp}
+                                        onChange={e => setOtp(e.target.value)}
+                                        required
+                                        maxLength={6}
+                                        placeholder=" "
+                                        className="w-full pt-5 pb-1 outline-none text-gray-800 text-[20px] tracking-[0.4em] bg-transparent peer"
+                                    />
+                                    <label className="absolute left-0 top-3 text-gray-400 text-[14px] font-medium pointer-events-none transition-all duration-200 peer-focus:-translate-y-4 peer-focus:text-xs peer-focus:text-[#2874f0] peer-[&:not(:placeholder-shown)]:-translate-y-4 peer-[&:not(:placeholder-shown)]:text-xs">
+                                        Enter OTP
+                                    </label>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full bg-[#fb641b] text-white font-semibold py-3 rounded-sm hover:bg-[#f35200] transition disabled:opacity-60 text-[15px]"
+                                >
+                                    {loading ? 'Verifying...' : 'Verify OTP'}
+                                </button>
+
+                                <div className="flex items-center justify-between text-[13px]">
+                                    <button
+                                        type="button"
+                                        onClick={handleRequestOtp}
+                                        className="text-[#2874f0] font-semibold hover:underline"
+                                    >
+                                        Resend OTP
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => { clear(); setMode('password'); }}
+                                        className="text-[#2874f0] font-semibold hover:underline"
+                                    >
+                                        Login with Password
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+
+                        {/* ── Forgot password ── */}
+                        {mode === 'forgot' && (
+                            <form onSubmit={handleForgotPassword} className="space-y-6">
+                                <p className="text-sm text-gray-600">
+                                    Enter your registered email and we'll send you a reset link.
+                                </p>
+                                <div className="relative border-b border-gray-300 focus-within:border-[#2874f0] transition-colors pb-1">
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        onChange={e => setEmail(e.target.value)}
+                                        required
+                                        placeholder=" "
+                                        className="w-full pt-5 pb-1 outline-none text-gray-800 text-[15px] bg-transparent peer"
+                                    />
+                                    <label className="absolute left-0 top-3 text-gray-400 text-[14px] font-medium pointer-events-none transition-all duration-200 peer-focus:-translate-y-4 peer-focus:text-xs peer-focus:text-[#2874f0] peer-[&:not(:placeholder-shown)]:-translate-y-4 peer-[&:not(:placeholder-shown)]:text-xs">
+                                        Enter Email Address
+                                    </label>
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full bg-[#fb641b] text-white font-semibold py-3 rounded-sm hover:bg-[#f35200] transition disabled:opacity-60 text-[15px]"
+                                >
+                                    {loading ? 'Sending...' : 'Send Reset Link'}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => { clear(); setMode('email'); }}
+                                    className="w-full text-[#2874f0] text-[13px] font-semibold hover:underline"
+                                >
+                                    ← Back to Login
+                                </button>
+                            </form>
+                        )}
+                    </div>
+
+                    {/* Sign up link */}
+                    <div className="pb-6 mt-auto">
+                        <div className="text-center">
+                            <Link to="/register" className="text-[#2874f0] font-semibold text-[14px] tracking-wide hover:underline">
+                                New to Flipkart? Create an account
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>

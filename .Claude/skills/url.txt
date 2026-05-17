@@ -1,0 +1,39 @@
+dmin Panel
+Login first:
+
+http://localhost:5173/login
+Email: admin@flipkart.com | Password: password
+
+Then access any admin page:
+
+Page	URL
+Dashboard	http://localhost:5173/admin
+Products	http://localhost:5173/admin/products
+Orders	http://localhost:5173/admin/orders
+Users	http://localhost:5173/admin/users
+Sellers	http://localhost:5173/admin/sellers
+Inventory	http://localhost:5173/admin/inventory
+Coupons	http://localhost:5173/admin/coupons
+Banners	http://localhost:5173/admin/banners
+Reports	http://localhost:5173/admin/reports
+Seller Panel
+Login first:
+
+http://localhost:5173/seller/login
+Email: seller@flipkart.com | Password: password
+
+Then access any seller page:
+
+Page	URL
+Dashboard	http://localhost:5173/seller
+My Products	http://localhost:5173/seller/products
+Add Product	http://localhost:5173/seller/products/add
+Orders	http://localhost:5173/seller/orders
+Inventory	http://localhost:5173/seller/inventory
+Analytics	http://localhost:5173/seller/analytics
+Earnings	http://localhost:5173/seller/earnings
+Profile	http://localhost:5173/seller/profile
+If you get redirected to /login, it means you're not logged in yet. Login first, then navigate to the admin/seller URL.
+
+Est. Credits Used: 0.44
+Elapsed time: 12s

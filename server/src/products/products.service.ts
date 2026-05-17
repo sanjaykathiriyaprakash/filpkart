@@ -88,6 +88,21 @@ export class ProductsService {
                     { search: `%${normalizedSearch}%` },
                 );
             }
+
+            // ── Fallback: if profile search returns nothing, do broad text search ──
+            const profileResults = await query.getMany();
+            if (profileResults.length === 0 && profile) {
+                return this.productsRepository.createQueryBuilder('product')
+                    .leftJoinAndSelect('product.category', 'category')
+                    .leftJoinAndSelect('product.brand', 'brand')
+                    .where(
+                        '(product.title ILIKE :fs OR product.description ILIKE :fs OR category.name ILIKE :fs OR brand.name ILIKE :fs)',
+                        { fs: `%${normalizedSearch}%` },
+                    )
+                    .orderBy('product.createdAt', 'DESC')
+                    .getMany();
+            }
+            return profileResults;
         }
 
         if (minPrice != null && !Number.isNaN(Number(minPrice))) {
@@ -141,6 +156,7 @@ export class ProductsService {
         colors: string[];
         sizes: string[];
         brands: string[];
+        attributes: Record<string, string[]>;
         priceRange: { min: number; max: number };
     }> {
         const products = await this.findAll(search);
@@ -148,6 +164,7 @@ export class ProductsService {
         let colors = new Set<string>();
         let sizes = new Set<string>();
         const brands = new Set<string>();
+        const attributesMap = new Map<string, Set<string>>();
         let minP = Infinity;
         let maxP = 0;
 
@@ -165,6 +182,14 @@ export class ProductsService {
             const { colors: c, sizes: s } = collectFilterValues(variants);
             c.forEach((x) => colors.add(x));
             s.forEach((x) => sizes.add(x));
+
+            // Extract dynamic attributes
+            if (p.attributes && typeof p.attributes === 'object') {
+                for (const [key, value] of Object.entries(p.attributes)) {
+                    if (!attributesMap.has(key)) attributesMap.set(key, new Set());
+                    if (value) attributesMap.get(key)!.add(String(value));
+                }
+            }
         }
 
         // Auto-backfill DB once when filters are empty but products exist
@@ -192,6 +217,7 @@ export class ProductsService {
             colors: [...colors].sort(),
             sizes: [...sizes].sort(),
             brands: [...brands].sort(),
+            attributes: Object.fromEntries([...attributesMap.entries()].map(([k, v]) => [k, [...v].sort()])),
             priceRange: {
                 min: minP === Infinity ? 0 : minP,
                 max: maxP || 500,

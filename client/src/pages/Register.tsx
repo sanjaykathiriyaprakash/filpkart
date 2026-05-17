@@ -20,7 +20,7 @@ export default function Register() {
     };
 
     return (
-        <div className="min-h-screen bg-[#f1f3f6] flex items-center justify-center p-4">
+        <div className="h-full w-full flex-1 bg-[#f1f3f6] flex items-center justify-center p-4 md:py-12">
             <div className="bg-white shadow-2xl rounded-sm flex max-w-4xl w-full overflow-hidden min-h-[500px]">
 
                 <div className="w-2/5 bg-[#2874f0] p-10 flex flex-col justify-between hidden md:flex text-white">

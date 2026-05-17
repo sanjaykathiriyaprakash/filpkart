@@ -42,6 +42,9 @@ export class User {
     @Column({ default: false })
     isVerified: boolean;
 
+    @Column('jsonb', { nullable: true })
+    sellerProfile: any;
+
     @Column({ nullable: true })
     otp: string;
 

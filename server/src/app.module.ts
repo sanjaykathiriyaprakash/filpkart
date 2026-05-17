@@ -10,6 +10,8 @@ import { OrdersModule } from './orders/orders.module';
 import { AuthModule } from './auth/auth.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { PaymentsModule } from './payments/payments.module';
+import { AdminModule } from './admin/admin.module';
+import { SellerModule } from './seller/seller.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { PaymentsModule } from './payments/payments.module';
     AuthModule,
     WishlistModule,
     PaymentsModule,
+    AdminModule,
+    SellerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

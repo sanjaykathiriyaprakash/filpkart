@@ -53,11 +53,11 @@
 - [x] Google login integration
 
 ## User Features
-- [ ] User profile page
-- [ ] Edit profile
+- [x] User profile page
+- [x] Edit profile
 - [ ] Upload profile image
-- [ ] Address management
-- [ ] Change password
+- [x] Address management
+- [x] Change password
 - [ ] Order history
 - [ ] Wishlist management
 
@@ -163,29 +163,29 @@
 # Phase 8 – Admin Dashboard
 
 ## Admin Features
-- [ ] Admin authentication
-- [ ] Dashboard analytics
-- [ ] User management
-- [ ] Seller management
-- [ ] Product approval
-- [ ] Inventory management
-- [ ] Order management
-- [ ] Coupon management
-- [ ] Banner management
-- [ ] Sales reports
+- [x] Admin authentication
+- [x] Dashboard analytics
+- [x] User management
+- [x] Seller management
+- [x] Product approval
+- [x] Inventory management
+- [x] Order management
+- [x] Coupon management
+- [x] Banner management
+- [x] Sales reports
 
 ---
 
 # Phase 9 – Seller Dashboard
 
 ## Seller Features
-- [ ] Seller registration
-- [ ] Seller login
-- [ ] Product upload
-- [ ] Product management
-- [ ] Inventory updates
-- [ ] Seller analytics
-- [ ] Earnings dashboard
+- [x] Seller registration
+- [x] Seller login
+- [x] Product upload
+- [x] Product management
+- [x] Inventory updates
+- [x] Seller analytics
+- [x] Earnings dashboard
 
 ---
 
@@ -200,22 +200,22 @@
 ## User Pages
 - [x] Login page
 - [x] Register page
-- [ ] Profile page
+- [x] Profile page
 - [x] Cart page
 - [x] Wishlist page
 - [x] Checkout page
 - [x] Orders page
 
 ## Admin Pages
-- [ ] Admin dashboard
-- [ ] Product management page
-- [ ] Users management page
-- [ ] Orders management page
+- [x] Admin dashboard
+- [x] Product management page
+- [x] Users management page
+- [x] Orders management page
 
 ## Seller Pages
-- [ ] Seller dashboard
-- [ ] Product upload page
-- [ ] Inventory page
+- [x] Seller dashboard
+- [x] Product upload page
+- [x] Inventory page
 
 ---
 

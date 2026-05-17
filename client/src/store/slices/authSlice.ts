@@ -6,8 +6,18 @@ interface AuthState {
     token: string | null;
 }
 
+// Persist user object so RequireRole works on hard refresh
+function loadUser(): any | null {
+    try {
+        const raw = localStorage.getItem('user');
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+}
+
 const initialState: AuthState = {
-    user: null,
+    user: loadUser(),
     token: localStorage.getItem('token'),
 };
 
@@ -22,11 +32,13 @@ const authSlice = createSlice({
             state.user = action.payload.user;
             state.token = action.payload.token;
             localStorage.setItem('token', action.payload.token);
+            localStorage.setItem('user', JSON.stringify(action.payload.user));
         },
         logout: (state) => {
             state.user = null;
             state.token = null;
             localStorage.removeItem('token');
+            localStorage.removeItem('user');
         },
     },
 });

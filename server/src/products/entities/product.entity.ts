@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { Category } from './category.entity';
 import { Brand } from './brand.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity('products')
 export class Product {
@@ -19,11 +20,20 @@ export class Product {
     @ManyToOne(() => Brand, { nullable: true, onDelete: 'SET NULL' })
     brand: Brand;
 
+    @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+    seller: User;
+
     @Column({ unique: true, nullable: true })
     sku: string;
 
     @Column('jsonb', { nullable: true, default: [] })
     variants: any[];
+
+    @Column('jsonb', { nullable: true })
+    attributes: Record<string, string>;
+
+    @Column({ default: true })
+    isApproved: boolean;
 
     @Column('decimal')
     price: number;

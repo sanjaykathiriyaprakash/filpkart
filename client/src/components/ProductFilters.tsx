@@ -1,37 +1,86 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_BASE } from '../lib/api';
-import { toInr } from '../lib/pricing';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 export interface ProductFilterState {
     minPrice?: number;
     maxPrice?: number;
     minRating?: number;
-    color?: string;
-    size?: string;
     brand?: string;
     sortBy?: string;
+    attributes?: Record<string, string>;
 }
 
 interface FilterOptions {
-    colors: string[];
-    sizes: string[];
     brands: string[];
+    attributes: Record<string, string[]>;
     priceRange: { min: number; max: number };
 }
 
 interface Props {
     search?: string;
+    category?: string;
     filters: ProductFilterState;
     onChange: (next: ProductFilterState) => void;
 }
 
 const SORT_OPTIONS = [
-    { value: '', label: 'Relevance' },
-    { value: 'price_asc', label: 'Price -- Low to High' },
-    { value: 'price_desc', label: 'Price -- High to Low' },
+    { value: 'popularity', label: 'Popularity' },
+    { value: 'price_asc', label: 'Price — Low to High' },
+    { value: 'price_desc', label: 'Price — High to Low' },
     { value: 'rating_desc', label: 'Customer Rating' },
+    { value: '', label: 'Newest First' },
 ];
+
+function CollapsibleBlock({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
+    const [open, setOpen] = useState(defaultOpen);
+    return (
+        <div className="border-b border-gray-100 py-3">
+            <button
+                className="flex items-center justify-between w-full text-left"
+                onClick={() => setOpen(o => !o)}
+            >
+                <span className="text-xs font-bold text-gray-600 uppercase tracking-wide">{title}</span>
+                {open ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+            </button>
+            {open && <div className="mt-2">{children}</div>}
+        </div>
+    );
+}
+
+function BrandSearch({ brands, selected, onSelect }: { brands: string[]; selected?: string; onSelect: (b: string) => void }) {
+    const [q, setQ] = useState('');
+    const filtered = brands.filter(b => b.toLowerCase().includes(q.toLowerCase()));
+    return (
+        <div>
+            <div className="flex items-center border border-gray-200 rounded px-2 py-1 mb-2">
+                <input
+                    type="text"
+                    placeholder="Search Brand"
+                    value={q}
+                    onChange={e => setQ(e.target.value)}
+                    className="flex-1 outline-none text-xs"
+                />
+            </div>
+            <ul className="space-y-1 max-h-40 overflow-y-auto">
+                {filtered.slice(0, 20).map(brand => (
+                    <li key={brand}>
+                        <label className="flex items-center gap-2 text-sm cursor-pointer hover:text-[#2874f0]">
+                            <input
+                                type="checkbox"
+                                checked={selected === brand}
+                                onChange={() => onSelect(brand)}
+                                className="accent-[#2874f0] w-3.5 h-3.5"
+                            />
+                            <span className="capitalize text-[13px]">{brand}</span>
+                        </label>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
 
 export default function ProductFilters({ search, filters, onChange }: Props) {
     const [options, setOptions] = useState<FilterOptions | null>(null);
@@ -44,33 +93,21 @@ export default function ProductFilters({ search, filters, onChange }: Props) {
         axios
             .get(`${API_BASE}/products/filter-options?${params}`)
             .then(({ data }) => {
-                const hint = search || '';
-                const isFashion =
-                    hint.includes('shirt') || hint.includes('men') || hint.includes('women');
-                const fallbackColors = ['Black', 'Blue', 'Red', 'White', 'Green'];
-                const fallbackSizes = isFashion ? ['S', 'M', 'L', 'XL'] : ['Standard', 'Large'];
                 setOptions({
-                    colors: data.colors?.length ? data.colors : fallbackColors,
-                    sizes: data.sizes?.length ? data.sizes : fallbackSizes,
                     brands: data.brands || [],
-                    priceRange: data.priceRange || { min: 0, max: 500 },
+                    attributes: data.attributes || {},
+                    priceRange: data.priceRange || { min: 0, max: 100000 },
                 });
             })
             .catch(() => {
-                const isFashion = (search || '').includes('shirt') || (search || '').includes('men');
-                setOptions({
-                    colors: ['Black', 'Blue', 'Red', 'White', 'Green'],
-                    sizes: isFashion ? ['S', 'M', 'L', 'XL'] : ['Standard', 'Large'],
-                    brands: [],
-                    priceRange: { min: 0, max: 500 },
-                });
+                setOptions({ brands: [], attributes: {}, priceRange: { min: 0, max: 100000 } });
             });
     }, [search]);
 
     useEffect(() => {
         if (options) {
-            setPriceMin(filters.minPrice != null ? String(toInr(filters.minPrice)) : '');
-            setPriceMax(filters.maxPrice != null ? String(toInr(filters.maxPrice)) : '');
+            setPriceMin(filters.minPrice != null ? String(Math.round(Number(filters.minPrice) * 82)) : '');
+            setPriceMax(filters.maxPrice != null ? String(Math.round(Number(filters.maxPrice) * 82)) : '');
         }
     }, [options, filters.minPrice, filters.maxPrice]);
 
@@ -85,163 +122,152 @@ export default function ProductFilters({ search, filters, onChange }: Props) {
     const clearAll = () => {
         setPriceMin('');
         setPriceMax('');
-        onChange({ sortBy: filters.sortBy });
+        onChange({});
+    };
+
+    const setAttr = (key: string, val: string) => {
+        const existing = filters.attributes?.[key];
+        const next = { ...(filters.attributes || {}) };
+        if (existing === val) delete next[key];
+        else next[key] = val;
+        onChange({ ...filters, attributes: Object.keys(next).length ? next : undefined });
     };
 
     if (!options) {
         return (
-            <aside className="w-full lg:w-56 bg-white rounded-sm shadow-sm p-4 h-fit animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-2/3 mb-4" />
-                <div className="space-y-2">
-                    {[1, 2, 3, 4].map((n) => (
-                        <div key={n} className="h-3 bg-gray-100 rounded" />
-                    ))}
+            <aside className="w-[228px] shrink-0 bg-white shadow-sm animate-pulse">
+                <div className="p-4 space-y-3">
+                    {[1, 2, 3, 4, 5].map(n => <div key={n} className="h-4 bg-gray-100 rounded" />)}
                 </div>
             </aside>
         );
     }
 
+    const priceSliderMax = Math.ceil(options.priceRange.max * 82);
+
     return (
-        <aside className="w-full lg:w-56 bg-white rounded-sm shadow-sm p-4 h-fit sticky top-32">
-            <div className="flex items-center justify-between border-b pb-2 mb-3">
-                <h3 className="font-bold text-sm text-gray-800 uppercase">Filters</h3>
-                <button type="button" onClick={clearAll} className="text-xs text-[#2874f0] font-semibold hover:underline">
+        <aside className="w-[228px] shrink-0 bg-white shadow-sm sticky top-[60px] self-start max-h-[calc(100vh-60px)] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                <span className="font-semibold text-[15px] text-gray-900">Filters</span>
+                <button
+                    onClick={clearAll}
+                    className="text-[13px] text-[#2874f0] font-semibold hover:underline"
+                >
                     CLEAR ALL
                 </button>
             </div>
 
-            <FilterBlock title="Sort By">
-                <select
-                    value={filters.sortBy || ''}
-                    onChange={(e) => onChange({ ...filters, sortBy: e.target.value || undefined })}
-                    className="w-full border border-gray-300 rounded-sm text-sm py-1.5 px-2 focus:border-[#2874f0] outline-none"
-                >
-                    {SORT_OPTIONS.map((o) => (
-                        <option key={o.value} value={o.value}>
-                            {o.label}
-                        </option>
-                    ))}
-                </select>
-            </FilterBlock>
+            <div className="px-4">
+                {/* Sort By */}
+                <CollapsibleBlock title="Sort By">
+                    <ul className="space-y-1">
+                        {SORT_OPTIONS.map(opt => (
+                            <li key={opt.value}>
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name="sortBy"
+                                        checked={(filters.sortBy ?? '') === opt.value}
+                                        onChange={() => onChange({ ...filters, sortBy: opt.value || undefined })}
+                                        className="accent-[#2874f0] w-3.5 h-3.5"
+                                    />
+                                    <span className={`text-[13px] ${(filters.sortBy ?? '') === opt.value ? 'text-[#2874f0] font-semibold' : 'text-gray-700'}`}>
+                                        {opt.label}
+                                    </span>
+                                </label>
+                            </li>
+                        ))}
+                    </ul>
+                </CollapsibleBlock>
 
-            <FilterBlock title="Price">
-                <div className="flex gap-2 items-center text-xs">
+                {/* Price */}
+                <CollapsibleBlock title="Price">
                     <input
-                        type="number"
-                        placeholder="Min"
-                        value={priceMin}
-                        onChange={(e) => setPriceMin(e.target.value)}
-                        className="w-full border rounded-sm px-2 py-1"
+                        type="range"
+                        min={0}
+                        max={priceSliderMax}
+                        value={priceMax || priceSliderMax}
+                        onChange={e => setPriceMax(e.target.value)}
+                        onMouseUp={applyPrice}
+                        onTouchEnd={applyPrice}
+                        className="w-full accent-[#2874f0]"
                     />
-                    <span className="text-gray-400">to</span>
-                    <input
-                        type="number"
-                        placeholder="Max"
-                        value={priceMax}
-                        onChange={(e) => setPriceMax(e.target.value)}
-                        className="w-full border rounded-sm px-2 py-1"
-                    />
-                </div>
-                <button
-                    type="button"
-                    onClick={applyPrice}
-                    className="mt-2 w-full text-xs font-bold text-[#2874f0] border border-[#2874f0] py-1 rounded-sm hover:bg-blue-50"
-                >
-                    Apply
-                </button>
-                <p className="text-[10px] text-gray-400 mt-1">
-                    ₹{toInr(options.priceRange.min)} – ₹{toInr(options.priceRange.max)}
-                </p>
-            </FilterBlock>
-
-            {options.brands.length > 0 && (
-                <FilterBlock title="Brand">
-                    <CheckboxList
-                        items={options.brands}
-                        selected={filters.brand}
-                        onSelect={(brand) => onChange({ ...filters, brand: filters.brand === brand ? undefined : brand })}
-                    />
-                </FilterBlock>
-            )}
-
-            <FilterBlock title="Color">
-                <CheckboxList
-                    items={options.colors}
-                    selected={filters.color}
-                    onSelect={(color) => onChange({ ...filters, color: filters.color === color ? undefined : color })}
-                />
-            </FilterBlock>
-
-            <FilterBlock title="Size">
-                <div className="flex flex-wrap gap-1.5">
-                    {options.sizes.map((size) => (
-                        <button
-                            key={size}
-                            type="button"
-                            onClick={() => onChange({ ...filters, size: filters.size === size ? undefined : size })}
-                            className={`text-xs px-2.5 py-1 border rounded-sm font-medium transition-colors ${
-                                filters.size === size
-                                    ? 'border-[#2874f0] bg-[#2874f0] text-white'
-                                    : 'border-gray-300 text-gray-700 hover:border-[#2874f0]'
-                            }`}
-                        >
-                            {size}
-                        </button>
-                    ))}
-                </div>
-            </FilterBlock>
-
-            <FilterBlock title="Customer Ratings">
-                {[4, 3, 2, 1].map((r) => (
-                    <label key={r} className="flex items-center gap-2 text-sm cursor-pointer py-0.5">
+                    <div className="flex gap-2 mt-2 text-xs">
                         <input
-                            type="radio"
-                            name="rating"
-                            checked={filters.minRating === r}
-                            onChange={() => onChange({ ...filters, minRating: filters.minRating === r ? undefined : r })}
-                            className="accent-[#2874f0]"
+                            type="number"
+                            placeholder="Min"
+                            value={priceMin}
+                            onChange={e => setPriceMin(e.target.value)}
+                            className="w-full border border-gray-300 rounded px-2 py-1 text-center outline-none focus:border-[#2874f0]"
                         />
-                        <span>{r}★ & above</span>
-                    </label>
+                        <span className="self-center text-gray-400">to</span>
+                        <input
+                            type="number"
+                            placeholder="Max"
+                            value={priceMax}
+                            onChange={e => setPriceMax(e.target.value)}
+                            className="w-full border border-gray-300 rounded px-2 py-1 text-center outline-none focus:border-[#2874f0]"
+                        />
+                    </div>
+                    <button
+                        onClick={applyPrice}
+                        className="mt-2 w-full text-xs font-semibold text-[#2874f0] border border-[#2874f0] py-1 rounded hover:bg-blue-50 transition"
+                    >
+                        Apply
+                    </button>
+                </CollapsibleBlock>
+
+                {/* Customer Rating */}
+                <CollapsibleBlock title="Customer Ratings">
+                    {[4, 3, 2].map(r => (
+                        <label key={r} className="flex items-center gap-2 text-sm cursor-pointer py-0.5">
+                            <input
+                                type="radio"
+                                name="rating"
+                                checked={filters.minRating === r}
+                                onChange={() => onChange({ ...filters, minRating: filters.minRating === r ? undefined : r })}
+                                className="accent-[#2874f0] w-3.5 h-3.5"
+                            />
+                            <span className="text-[13px]">{r}★ & above</span>
+                        </label>
+                    ))}
+                </CollapsibleBlock>
+
+                {/* Brand */}
+                {options.brands.length > 0 && (
+                    <CollapsibleBlock title="Brand">
+                        <BrandSearch
+                            brands={options.brands}
+                            selected={filters.brand}
+                            onSelect={(brand) => onChange({ ...filters, brand: filters.brand === brand ? undefined : brand })}
+                        />
+                    </CollapsibleBlock>
+                )}
+
+                {/* Dynamic Attributes (Fabric, RAM, Occasion, etc.) */}
+                {Object.entries(options.attributes).map(([key, values]) => (
+                    values.length > 0 && (
+                        <CollapsibleBlock key={key} title={key} defaultOpen={false}>
+                            <ul className="space-y-1">
+                                {values.map(val => (
+                                    <li key={val}>
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.attributes?.[key] === val}
+                                                onChange={() => setAttr(key, val)}
+                                                className="accent-[#2874f0] w-3.5 h-3.5"
+                                            />
+                                            <span className="text-[13px] text-gray-700">{val}</span>
+                                        </label>
+                                    </li>
+                                ))}
+                            </ul>
+                        </CollapsibleBlock>
+                    )
                 ))}
-            </FilterBlock>
+            </div>
         </aside>
-    );
-}
-
-function FilterBlock({ title, children }: { title: string; children: React.ReactNode }) {
-    return (
-        <div className="border-b border-gray-100 py-3 last:border-0">
-            <h4 className="text-xs font-bold text-gray-700 uppercase mb-2">{title}</h4>
-            {children}
-        </div>
-    );
-}
-
-function CheckboxList({
-    items,
-    selected,
-    onSelect,
-}: {
-    items: string[];
-    selected?: string;
-    onSelect: (v: string) => void;
-}) {
-    return (
-        <ul className="space-y-1 max-h-36 overflow-y-auto">
-            {items.map((item) => (
-                <li key={item}>
-                    <label className="flex items-center gap-2 text-sm cursor-pointer hover:text-[#2874f0]">
-                        <input
-                            type="checkbox"
-                            checked={selected === item}
-                            onChange={() => onSelect(item)}
-                            className="accent-[#2874f0]"
-                        />
-                        <span className="capitalize">{item}</span>
-                    </label>
-                </li>
-            ))}
-        </ul>
     );
 }
