@@ -74,6 +74,8 @@ export const SEARCH_PROFILES: Record<string, SearchProfile> = {
     televisions:                    { categories: ['televisions', 'appliances'] },
     television:                     { categories: ['televisions', 'appliances'] },
     'smart tvs':                    { categories: ['televisions'] },
+    tv:                             { categories: ['televisions'], titleTerms: ['tv', 'television'] },
+    tvs:                            { categories: ['televisions'], titleTerms: ['tv', 'television'] },
 
     // ── TVs & Appliances ─────────────────────────────────────────────────────
     appliances:                     { categories: ['appliances'] },
@@ -447,6 +449,8 @@ export const SEARCH_PROFILES: Record<string, SearchProfile> = {
     'vitamin supplements':          { categories: ['groceries'] },
     'health drinks':                { categories: ['groceries'] },
     'ayurvedic supplements':        { categories: ['groceries'] },
+    drinks:                         { categories: ['groceries'], titleTerms: ['drink', 'soda', 'coke', 'cola', 'juice', 'beverage'] },
+    drink:                          { categories: ['groceries'], titleTerms: ['drink', 'soda', 'coke', 'cola', 'juice', 'beverage'] },
 
     // ── Automotive ────────────────────────────────────────────────────────────
     automotive:                     { categories: ['motorcycle', 'automotive'] },

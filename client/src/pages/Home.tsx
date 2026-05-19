@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../store/slices/cartSlice';
 import { logout } from '../store/slices/authSlice';
 import { ShoppingCart, Star, ChevronRight, ChevronLeft, Search, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import BannerCarousel from '../components/BannerCarousel';
 import BrandDirectory from '../components/BrandDirectory';
 import ProductFilters, { type ProductFilterState } from '../components/ProductFilters';
@@ -16,20 +16,20 @@ import type { RootState } from '../store/store';
 import DeliveryLocationModal from '../components/DeliveryLocationModal';
 
 const NAV_CATEGORIES = [
-    { title: 'For You', search: '' },
-    { title: 'Fashion', search: 'mens-shirts' },
-    { title: 'Mobiles', search: 'smartphones' },
-    { title: 'Beauty', search: 'beauty' },
-    { title: 'Electronics', search: 'laptops' },
-    { title: 'Home', search: 'home-decoration' },
-    { title: 'Appliances', search: 'appliances' },
-    { title: 'Toys, ba...', search: 'mobile-accessories' },
-    { title: 'Food & H...', search: 'groceries' },
-    { title: 'Auto Acc...', search: 'automotive' },
-    { title: '2 Wheele...', search: 'motorcycle' },
-    { title: 'Sports & ...', search: 'sports-accessories' },
-    { title: 'Books & ...', search: 'books' },
-    { title: 'Furniture', search: 'furniture' },
+    { title: 'For You', search: '', path: '/' },
+    { title: 'Fashion', search: 'mens-shirts', path: '/aw-base-new-inline-2025-at-store' },
+    { title: 'Mobiles', search: 'smartphones', path: '/mobile-phones-sasa-lele-2026-ab-inline-at-store' },
+    { title: 'Beauty', search: 'beauty', path: '/bpc-bau-new-inline-at-store' },
+    { title: 'Electronics', search: 'laptops', path: '/new-elec-clp-march-at-store' },
+    { title: 'Home', search: 'home-decoration', path: '/home-kitchen-25-at-store' },
+    { title: 'Appliances', search: 'appliances', path: '/tv-and-appliances-inline-ab-at-store' },
+    { title: 'Toys, ba...', search: 'mobile-accessories', path: '/toys-baby-2025-new-at-store' },
+    { title: 'Food & H...', search: 'groceries', path: '/fnhc-2025-new-at-store' },
+    { title: 'Auto Acc...', search: 'automotive', path: '/aa-2025-new-at-store' },
+    { title: '2 Wheele...', search: 'motorcycle', path: '/twowheelers-at-store' },
+    { title: 'Sports & ...', search: 'sports-accessories', path: '/sf-inline-2025-at-store' },
+    { title: 'Books & ...', search: 'books', path: '/booksmedia-2025-at-store' },
+    { title: 'Furniture', search: 'furniture', path: '/india-ka-furniture-studio-inlines-at-store' },
 ];
 
 // Sections shown on "For You" as horizontal rows
@@ -99,7 +99,7 @@ const SEO_SECTIONS = [
 ];
 
 export default function Home() {
-    const [activeCategory, setActiveCategory] = useState('For You');
+    const { pathname } = useLocation();
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [sectionData, setSectionData] = useState<Record<string, any[]>>({});
     const [loading, setLoading] = useState(false);
@@ -119,6 +119,10 @@ export default function Home() {
     const [searchParams] = useSearchParams();
     const search = searchParams.get('search');
 
+    // Derivate activeCategory from path matching
+    const matchedCategory = NAV_CATEGORIES.find(c => c.path === pathname) || NAV_CATEGORIES[0];
+    const activeCategory = matchedCategory.title;
+
     useEffect(() => {
         const handler = (e: MouseEvent) => {
             if (loginRef.current && !loginRef.current.contains(e.target as Node)) {
@@ -133,12 +137,6 @@ export default function Home() {
             if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current);
         };
     }, []);
-
-    useEffect(() => {
-        if (!search) return;
-        const match = NAV_CATEGORIES.find((c) => c.search === search);
-        if (match) setActiveCategory(match.title);
-    }, [search]);
 
     const isForYou = activeCategory === 'For You' && !search;
     const isAutoCategory =
@@ -192,9 +190,7 @@ export default function Home() {
     }, [isForYou]);
 
     const handleCategoryClick = (cat: typeof NAV_CATEGORIES[0]) => {
-        setActiveCategory(cat.title);
-        if (cat.search) navigate(`/?search=${encodeURIComponent(cat.search)}`);
-        else navigate('/');
+        navigate(cat.path);
     };
 
     const handleSearch = (e: React.FormEvent) => {
