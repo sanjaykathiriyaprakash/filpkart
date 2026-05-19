@@ -7,7 +7,7 @@ export const CATALOG_EXTRAS = [
         brand: 'Infinix',
         price: 195, // ~15,999 INR
         stock: 120,
-        images: ['https://images.unsplash.com/photo-1598327105666-5b89351aff23?w=400'],
+        images: ['https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400'],
         rating: 4.3,
         attributes: {
             'RAM': '6 GB RAM',
@@ -83,7 +83,7 @@ export const CATALOG_EXTRAS = [
         brand: 'Infinix',
         price: 89, // ~7,299 INR
         stock: 200,
-        images: ['https://images.unsplash.com/photo-1598327105666-5b89351aff23?w=400'],
+        images: ['https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400'],
         rating: 4.2,
         attributes: {
             'RAM': '3 GB RAM',
@@ -123,7 +123,7 @@ export const CATALOG_EXTRAS = [
         brand: 'Motorola',
         price: 219, // ~17,999 INR
         stock: 80,
-        images: ['https://images.unsplash.com/photo-1598327105666-5b89351aff23?w=400'],
+        images: ['https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=400'],
         rating: 4.3,
         attributes: {
             'RAM': '8 GB RAM',
@@ -182,7 +182,7 @@ export const CATALOG_EXTRAS = [
         brand: 'Realme',
         price: 195, // ~15,999 INR
         stock: 75,
-        images: ['https://images.unsplash.com/photo-1598327105666-5b89351aff23?w=400'],
+        images: ['https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400'],
         rating: 4.3,
         attributes: {
             'RAM': '8 GB RAM',
@@ -325,13 +325,13 @@ export const CATALOG_EXTRAS = [
 
     // ── Washing Machines ──
     {
-        title: 'LG 7 kg 5 Star Smart Inverter Fully Automatic Front Load',
+        title: 'LG 7 kg 5 Star Smart Inverter Fully Automatic Front Load Washing Machine',
         description: 'Washing machine with 6 Motion DD technology and built-in heater for hygienic cleaning.',
-        category: 'kitchen-accessories',
+        category: 'appliances',
         brand: 'LG',
         price: 353, // ~28,990 INR
         stock: 45,
-        images: ['https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=400'],
+        images: ['https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=400'],
         rating: 4.5,
         attributes: {
             'Capacity': '7 kg',
@@ -342,13 +342,13 @@ export const CATALOG_EXTRAS = [
         }
     },
     {
-        title: 'Samsung 6 kg 5 Star Inverter Fully Automatic Front Load',
-        description: 'Hygiene Steam cycle ensures deep cleaning, sanitizing, and stain removal from clothes.',
-        category: 'kitchen-accessories',
+        title: 'Samsung 6 kg 5 Star Inverter Fully Automatic Front Load Washing Machine',
+        description: 'Washing machine with Hygiene Steam cycle that ensures deep cleaning, sanitizing, and stain removal from clothes.',
+        category: 'appliances',
         brand: 'Samsung',
         price: 268, // ~21,990 INR
         stock: 50,
-        images: ['https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=400'],
+        images: ['https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=400'],
         rating: 4.4,
         attributes: {
             'Capacity': '6 kg',
@@ -363,11 +363,11 @@ export const CATALOG_EXTRAS = [
     {
         title: 'Samsung 183 L 3 Star Direct Cool Single Door Refrigerator',
         description: 'Stylish Grandecor Blue design with Digital Inverter technology and base drawer for vegetables.',
-        category: 'kitchen-accessories',
+        category: 'appliances',
         brand: 'Samsung',
         price: 188, // ~15,490 INR
         stock: 65,
-        images: ['https://images.unsplash.com/photo-1571175432230-01907f749101?w=400'],
+        images: ['https://upload.wikimedia.org/wikipedia/commons/3/35/LG_refrigerator.jpg'],
         rating: 4.3,
         attributes: {
             'Capacity': '183 L',
@@ -380,11 +380,11 @@ export const CATALOG_EXTRAS = [
     {
         title: 'LG 242 L 3 Star Smart Inverter Double Door Refrigerator',
         description: 'Smart Diagnosis and Auto Smart Connect. Frost free cooling to keep food fresh for longer.',
-        category: 'kitchen-accessories',
+        category: 'appliances',
         brand: 'LG',
         price: 304, // ~24,990 INR
         stock: 40,
-        images: ['https://images.unsplash.com/photo-1571175432230-01907f749101?w=400'],
+        images: ['https://upload.wikimedia.org/wikipedia/commons/8/85/LG_refrigerator_interior.jpg'],
         rating: 4.4,
         attributes: {
             'Capacity': '242 L',

@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Patch, Body, Param } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Body, Param, Query } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { OrderStatus } from './entities/order.entity';
 
@@ -9,6 +9,14 @@ export class OrdersController {
     @Post()
     async createOrder(@Body() orderData: any) {
         return this.ordersService.create(orderData);
+    }
+
+    @Get()
+    async getOrders(@Query('userId') userId?: string) {
+        if (userId) {
+            return this.ordersService.findByUser(userId);
+        }
+        return [];
     }
 
     @Get(':id')

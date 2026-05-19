@@ -127,12 +127,27 @@ export default function ProductDetails() {
                         </span>
                     </div>
 
-                    <div className="mt-4 flex items-baseline gap-3">
-                        <span className="text-3xl font-bold text-gray-900">{formatInr(product.price)}</span>
-                        <span className="text-base text-gray-500 line-through font-semibold">
-                            {formatInr(product.price * 1.25)}
-                        </span>
-                        <span className="text-sm font-bold text-green-600">20% off</span>
+                    <div className="mt-4 flex items-center gap-4 flex-wrap">
+                        <div className="flex items-baseline gap-3">
+                            <span className="text-3xl font-bold text-gray-900">{formatInr(product.price)}</span>
+                            <span className="text-base text-gray-500 line-through font-semibold">
+                                {formatInr(product.price * 1.25)}
+                            </span>
+                            <span className="text-sm font-bold text-green-600">20% off</span>
+                        </div>
+                        {product.stock <= 5 ? (
+                            <span className="bg-red-50 text-red-600 text-xs px-2.5 py-1 rounded border border-red-200 font-bold animate-pulse">
+                                Only {product.stock} left in stock!
+                            </span>
+                        ) : product.stock <= 25 ? (
+                            <span className="bg-orange-50 text-orange-600 text-xs px-2.5 py-1 rounded border border-orange-200 font-semibold">
+                                Low Stock: {product.stock} available
+                            </span>
+                        ) : (
+                            <span className="bg-green-50 text-green-700 text-xs px-2.5 py-1 rounded border border-green-200 font-semibold">
+                                Stock Status: {product.stock} in stock
+                            </span>
+                        )}
                     </div>
 
                     {colorVariant && (

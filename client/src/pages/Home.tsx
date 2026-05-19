@@ -22,7 +22,7 @@ const NAV_CATEGORIES = [
     { title: 'Beauty', search: 'beauty' },
     { title: 'Electronics', search: 'laptops' },
     { title: 'Home', search: 'home-decoration' },
-    { title: 'Appliances', search: 'kitchen-accessories' },
+    { title: 'Appliances', search: 'appliances' },
     { title: 'Toys, ba...', search: 'mobile-accessories' },
     { title: 'Food & H...', search: 'groceries' },
     { title: 'Auto Acc...', search: 'automotive' },
@@ -34,7 +34,7 @@ const NAV_CATEGORIES = [
 
 // Sections shown on "For You" as horizontal rows
 const HOME_SECTIONS = [
-    { title: 'Appliance for Cool Summer', search: 'kitchen-accessories', color: '#ff6161' },
+    { title: 'Appliance for Cool Summer', search: 'appliances', color: '#ff6161' },
     { title: 'Top Smartphones', search: 'smartphones', color: '#2874f0' },
     { title: 'Fashion Picks', search: 'mens-shirts', color: '#ff7f3f' },
     { title: 'Beauty & Skincare', search: 'beauty', color: '#e91e8c' },
@@ -110,6 +110,7 @@ export default function Home() {
     const [locationOpen, setLocationOpen] = useState(false);
     const loginRef = useRef<HTMLDivElement>(null);
     const moreRef = useRef<HTMLDivElement>(null);
+    const loginTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { user } = useSelector((state: RootState) => state.auth);
     const { items } = useSelector((state: RootState) => state.cart);
     const delivery = useSelector((state: RootState) => state.location.delivery);
@@ -120,11 +121,17 @@ export default function Home() {
 
     useEffect(() => {
         const handler = (e: MouseEvent) => {
-            if (loginRef.current && !loginRef.current.contains(e.target as Node)) setLoginOpen(false);
+            if (loginRef.current && !loginRef.current.contains(e.target as Node)) {
+                if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current);
+                setLoginOpen(false);
+            }
             if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false);
         };
         document.addEventListener('mousedown', handler);
-        return () => document.removeEventListener('mousedown', handler);
+        return () => {
+            document.removeEventListener('mousedown', handler);
+            if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current);
+        };
     }, []);
 
     useEffect(() => {
@@ -155,6 +162,8 @@ export default function Home() {
                     minRating: filters.minRating,
                     brand: filters.brand,
                     sortBy: filters.sortBy,
+                    color: filters.color,
+                    size: filters.size,
                 });
                 const { data } = await axios.get(url);
                 setSearchResults(data);
@@ -193,7 +202,33 @@ export default function Home() {
         navigate(searchQuery.trim() ? `/?search=${encodeURIComponent(searchQuery.trim())}` : '/');
     };
 
-    const handleLogout = () => { dispatch(logout()); setLoginOpen(false); };
+    const closeLoginMenu = () => {
+        if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current);
+        setLoginOpen(false);
+    };
+
+    const toggleLoginMenu = () => {
+        if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current);
+        setLoginOpen(p => !p);
+        setMoreOpen(false);
+    };
+
+    const onLoginEnter = () => {
+        if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current);
+        setLoginOpen(true);
+        setMoreOpen(false);
+    };
+
+    const onLoginLeave = () => {
+        loginTimeoutRef.current = setTimeout(() => {
+            setLoginOpen(false);
+        }, 3000); // stay open for 3 seconds so user has time to hover and click items
+    };
+
+    const handleLogout = () => {
+        dispatch(logout());
+        closeLoginMenu();
+    };
 
     const getCat = (p: any) => (p.category as any)?.name || p.category || '';
     const getBrand = (p: any) => (p.brand as any)?.name || p.brand || '';
@@ -264,8 +299,8 @@ export default function Home() {
                     </form>
 
                     {/* Login dropdown — Flipkart style with SVG icons */}
-                    <div className="relative flex-shrink-0 group" ref={loginRef} onMouseEnter={() => { setLoginOpen(true); setMoreOpen(false); }} onMouseLeave={() => setLoginOpen(false)}>
-                        <button onClick={() => { setLoginOpen(p => !p); setMoreOpen(false); }}
+                    <div className="relative flex-shrink-0 group" ref={loginRef} onMouseEnter={onLoginEnter} onMouseLeave={onLoginLeave}>
+                        <button onClick={toggleLoginMenu}
                             className="flex items-center gap-1.5 text-gray-800 font-semibold text-[15px] hover:text-[#2874f0] transition group px-2 py-2">
                             {/* Circle person icon */}
                             <span className="flex items-center justify-center w-6 h-6 rounded-full border-2 border-gray-600 group-hover:border-[#2874f0] transition-colors">
@@ -284,11 +319,11 @@ export default function Home() {
                                 {/* Header */}
                                 {!user ? (
                                     <div className="relative z-10 border-b border-gray-100">
-                                        <Link to="/login" onClick={() => setLoginOpen(false)}
+                                        <Link to="/login" onClick={closeLoginMenu}
                                             className="block w-full text-center bg-[#2874f0] text-white font-medium py-3 rounded-t-md hover:bg-[#2874f0]/90 transition-colors">Login</Link>
                                         <div className="flex items-center justify-between px-5 py-3 bg-white">
                                             <span className="text-sm text-gray-500 font-medium">New customer?</span>
-                                            <Link to="/register" onClick={() => setLoginOpen(false)}
+                                            <Link to="/register" onClick={closeLoginMenu}
                                                 className="text-[#2874f0] font-bold text-sm hover:underline">Sign Up</Link>
                                         </div>
                                     </div>
@@ -324,7 +359,7 @@ export default function Home() {
                                         { path: '/app', label: 'Download App',
                                           icon: <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#2874f0]" fill="currentColor"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg> },
                                     ].map(item => (
-                                        <Link key={item.label} to={item.path} onClick={() => setLoginOpen(false)}
+                                        <Link key={item.label} to={item.path} onClick={closeLoginMenu}
                                             className="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                                             {item.icon}
                                             <span>{item.label}</span>
@@ -337,7 +372,7 @@ export default function Home() {
 
                     {/* More */}
                     <div className="relative flex-shrink-0 hidden md:block" ref={moreRef}>
-                        <button onClick={() => { setMoreOpen(p => !p); setLoginOpen(false); }}
+                        <button onClick={() => { setMoreOpen(p => !p); closeLoginMenu(); }}
                             className="flex items-center gap-0.5 text-gray-800 font-semibold text-sm hover:text-[#2874f0] transition">
                             More {moreOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                         </button>

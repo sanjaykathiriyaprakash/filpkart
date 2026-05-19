@@ -9,11 +9,15 @@ export interface ProductFilterState {
     minRating?: number;
     brand?: string;
     sortBy?: string;
+    color?: string;
+    size?: string;
     attributes?: Record<string, string>;
 }
 
 interface FilterOptions {
     brands: string[];
+    colors: string[];
+    sizes: string[];
     attributes: Record<string, string[]>;
     priceRange: { min: number; max: number };
 }
@@ -95,12 +99,14 @@ export default function ProductFilters({ search, filters, onChange }: Props) {
             .then(({ data }) => {
                 setOptions({
                     brands: data.brands || [],
+                    colors: data.colors || [],
+                    sizes: data.sizes || [],
                     attributes: data.attributes || {},
                     priceRange: data.priceRange || { min: 0, max: 100000 },
                 });
             })
             .catch(() => {
-                setOptions({ brands: [], attributes: {}, priceRange: { min: 0, max: 100000 } });
+                setOptions({ brands: [], colors: [], sizes: [], attributes: {}, priceRange: { min: 0, max: 100000 } });
             });
     }, [search]);
 
@@ -242,6 +248,48 @@ export default function ProductFilters({ search, filters, onChange }: Props) {
                             selected={filters.brand}
                             onSelect={(brand) => onChange({ ...filters, brand: filters.brand === brand ? undefined : brand })}
                         />
+                    </CollapsibleBlock>
+                )}
+
+                {/* Color */}
+                {options.colors.length > 0 && (
+                    <CollapsibleBlock title="Color" defaultOpen={true}>
+                        <ul className="space-y-1 max-h-40 overflow-y-auto pr-1">
+                            {options.colors.map(c => (
+                                <li key={c}>
+                                    <label className="flex items-center gap-2 cursor-pointer py-0.5 hover:text-[#2874f0]">
+                                        <input
+                                            type="checkbox"
+                                            checked={filters.color === c}
+                                            onChange={() => onChange({ ...filters, color: filters.color === c ? undefined : c })}
+                                            className="accent-[#2874f0] w-3.5 h-3.5"
+                                        />
+                                        <span className="text-[13px] capitalize text-gray-700">{c}</span>
+                                    </label>
+                                </li>
+                            ))}
+                        </ul>
+                    </CollapsibleBlock>
+                )}
+
+                {/* Size */}
+                {options.sizes.length > 0 && (
+                    <CollapsibleBlock title="Size / Variant" defaultOpen={true}>
+                        <ul className="space-y-1 max-h-40 overflow-y-auto pr-1">
+                            {options.sizes.map(s => (
+                                <li key={s}>
+                                    <label className="flex items-center gap-2 cursor-pointer py-0.5 hover:text-[#2874f0]">
+                                        <input
+                                            type="checkbox"
+                                            checked={filters.size === s}
+                                            onChange={() => onChange({ ...filters, size: filters.size === s ? undefined : s })}
+                                            className="accent-[#2874f0] w-3.5 h-3.5"
+                                        />
+                                        <span className="text-[13px] uppercase text-gray-700">{s}</span>
+                                    </label>
+                                </li>
+                            ))}
+                        </ul>
                     </CollapsibleBlock>
                 )}
 

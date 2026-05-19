@@ -1,3 +1,55 @@
-node_modules/
-dist/
+# Compiled output
+/dist
+/prebuild-backends
+
+# Dependency directories
+/node_modules
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Testing / Coverage
+coverage/
+*.lcov
+.nyc_output
+
+# TypeScript cache
+*.tsbuildinfo
+
+# ESLint/Prettier cache
+.eslintcache
+.prettiercache
+
+# dotenv environment variable files
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor / IDE configuration
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS / System files
+.DS_Store
+Thumbs.db

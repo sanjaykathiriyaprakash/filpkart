@@ -266,29 +266,75 @@ export default function Navbar() {
     const loginRef = useRef<HTMLDivElement>(null);
     const moreRef = useRef<HTMLDivElement>(null);
     const catTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const loginTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const moreTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         const handler = (e: MouseEvent) => {
-            if (loginRef.current && !loginRef.current.contains(e.target as Node)) setLoginOpen(false);
-            if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false);
+            if (loginRef.current && !loginRef.current.contains(e.target as Node)) {
+                if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current);
+                setLoginOpen(false);
+            }
+            if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+                if (moreTimeoutRef.current) clearTimeout(moreTimeoutRef.current);
+                setMoreOpen(false);
+            }
         };
         document.addEventListener('mousedown', handler);
-        return () => document.removeEventListener('mousedown', handler);
+        return () => {
+            document.removeEventListener('mousedown', handler);
+            if (catTimeoutRef.current) clearTimeout(catTimeoutRef.current);
+            if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current);
+            if (moreTimeoutRef.current) clearTimeout(moreTimeoutRef.current);
+        };
     }, []);
 
-    const handleLogout = () => { dispatch(logout()); setLoginOpen(false); };
+    const handleLogout = () => {
+        if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current);
+        dispatch(logout());
+        setLoginOpen(false);
+    };
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         navigate(searchQuery.trim() ? `/search?q=${encodeURIComponent(searchQuery.trim())}` : '/');
     };
 
+    const onLoginEnter = () => {
+        if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current);
+        if (moreTimeoutRef.current) clearTimeout(moreTimeoutRef.current);
+        setLoginOpen(true);
+        setMoreOpen(false);
+    };
+
+    const onLoginLeave = () => {
+        loginTimeoutRef.current = setTimeout(() => {
+            setLoginOpen(false);
+        }, 150);
+    };
+
+    const onMoreEnter = () => {
+        if (moreTimeoutRef.current) clearTimeout(moreTimeoutRef.current);
+        if (loginTimeoutRef.current) clearTimeout(loginTimeoutRef.current);
+        setMoreOpen(true);
+        setLoginOpen(false);
+    };
+
+    const onMoreLeave = () => {
+        moreTimeoutRef.current = setTimeout(() => {
+            setMoreOpen(false);
+        }, 150);
+    };
+
     const onCatEnter = (label: string) => {
         if (catTimeoutRef.current) clearTimeout(catTimeoutRef.current);
         setHoveredCat(label);
+        setLoginOpen(false);
+        setMoreOpen(false);
     };
+
     const onCatLeave = () => {
-        catTimeoutRef.current = setTimeout(() => setHoveredCat(null), 120);
+        catTimeoutRef.current = setTimeout(() => setHoveredCat(null), 200);
     };
 
     const activeCat = CATEGORIES.find(c => c.label === hoveredCat);
@@ -334,7 +380,7 @@ export default function Navbar() {
                     <div className="flex items-center gap-7 flex-shrink-0">
 
                         {/* Login dropdown */}
-                        <div className="relative flex-shrink-0 group" ref={loginRef} onMouseEnter={() => { setLoginOpen(true); setMoreOpen(false); }} onMouseLeave={() => setLoginOpen(false)}>
+                        <div className="relative flex-shrink-0 group" ref={loginRef} onMouseEnter={onLoginEnter} onMouseLeave={onLoginLeave}>
                             <button type="button"
                                 onClick={() => { setLoginOpen(p => !p); setMoreOpen(false); }}
                                 className={isClassic 
@@ -353,7 +399,7 @@ export default function Navbar() {
                                 )}
                             </button>
                             {loginOpen && (
-                                <div className="absolute right-0 top-[calc(100%+8px)] w-[280px] bg-white rounded-md shadow-xl text-gray-700 z-50 border border-gray-100">
+                                <div className="absolute right-0 top-[calc(100%+8px)] w-[280px] bg-white rounded-md shadow-xl text-gray-700 z-50 border border-gray-100 before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2">
                                     {/* Triangle pointer */}
                                     <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white transform rotate-45 border-l border-t border-gray-100"></div>
                                     
@@ -426,14 +472,14 @@ export default function Navbar() {
                         </Link>
 
                         {/* More dropdown */}
-                        <div className="relative flex-shrink-0 hidden md:block group" ref={moreRef} onMouseEnter={() => { setMoreOpen(true); setLoginOpen(false); }} onMouseLeave={() => setMoreOpen(false)}>
+                        <div className="relative flex-shrink-0 hidden md:block group" ref={moreRef} onMouseEnter={onMoreEnter} onMouseLeave={onMoreLeave}>
                             <button type="button"
                                 onClick={() => { setMoreOpen(p => !p); setLoginOpen(false); }}
                                 className={`flex items-center gap-1 font-medium text-[16px] transition-colors ${isClassic ? 'text-white hover:text-gray-200' : (moreOpen ? 'text-[#2874f0]' : 'text-gray-800 hover:text-[#2874f0]')}`}>
                                 More <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
                             </button>
                             {moreOpen && (
-                                <div className="absolute right-0 top-[calc(100%+8px)] w-52 bg-white rounded-md shadow-xl z-50 border border-gray-100 py-1">
+                                <div className="absolute right-0 top-[calc(100%+8px)] w-52 bg-white rounded-md shadow-xl z-50 border border-gray-100 py-1 before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2">
                                     {/* Triangle pointer */}
                                     <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white transform rotate-45 border-l border-t border-gray-100"></div>
                                     {MORE_MENU.map(item => (

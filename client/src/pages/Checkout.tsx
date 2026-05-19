@@ -19,6 +19,7 @@ type Step = 'address' | 'payment' | 'processing' | 'success';
 
 export default function Checkout() {
     const { items } = useSelector((state: RootState) => state.cart);
+    const { user } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -72,6 +73,7 @@ export default function Checkout() {
                 totalAmount: total,
                 shippingAddress: address,
                 paymentStatus: 'PENDING',
+                user: user ? { id: user.id } : null,
             });
             setOrderId(orderData.id);
             setTrackingNo(orderData.trackingNumber);
@@ -81,7 +83,7 @@ export default function Checkout() {
             // 2. Create PaymentIntent
             const { data: intentData } = await axios.post(`${API}/payments/create-intent`, {
                 orderId: orderData.id,
-                userId: 'guest',
+                userId: user?.id || 'guest',
             });
 
             setProcessingMsg('Processing payment...');

@@ -47,9 +47,23 @@ export class PaymentsService {
             console.log('[Stripe Mock] Using dummy payment intent — configure real test key for live flow');
         }
 
+        let targetUser = null;
+        if (userId && userId !== 'guest') {
+            try {
+                const userExists = await this.paymentsRepository.manager.getRepository('User').findOne({
+                    where: { id: userId }
+                });
+                if (userExists) {
+                    targetUser = { id: userId } as any;
+                }
+            } catch (err) {
+                console.error('[Payments System] Failed to verify user existence:', err);
+            }
+        }
+
         const payment = this.paymentsRepository.create({
             order: { id: orderId } as any,
-            user: { id: userId } as any,
+            user: targetUser,
             amount: order.totalAmount,
             currency: 'INR',
             stripePaymentIntentId,

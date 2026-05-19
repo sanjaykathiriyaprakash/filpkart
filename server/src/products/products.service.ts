@@ -49,6 +49,17 @@ export class ProductsService {
         size?: string,
         brand?: string,
     ): Promise<Product[]> {
+        console.log('[DEBUG findAll] Incoming Parameters:', {
+            search,
+            minPrice,
+            maxPrice,
+            minRating,
+            sortBy,
+            color,
+            size,
+            brand,
+        });
+
         const query = this.productsRepository.createQueryBuilder('product')
             .leftJoinAndSelect('product.category', 'category')
             .leftJoinAndSelect('product.brand', 'brand');
@@ -74,9 +85,12 @@ export class ProductsService {
                 }
 
                 if (parts.length > 0) {
-                    query.andWhere(`(${parts.join(' OR ')})`, params);
+                    query.andWhere(`(${parts.join(' AND ')})`, params);
                 } else {
-                    query.andWhere('category.name ILIKE :search', { search: `%${normalizedSearch}%` });
+                    query.andWhere(
+                        '(product.title ILIKE :search OR product.description ILIKE :search OR category.name ILIKE :search OR brand.name ILIKE :search)',
+                        { search: `%${normalizedSearch}%` },
+                    );
                 }
 
                 profile.excludeTitlePatterns?.forEach((pat, i) => {
@@ -88,21 +102,6 @@ export class ProductsService {
                     { search: `%${normalizedSearch}%` },
                 );
             }
-
-            // ── Fallback: if profile search returns nothing, do broad text search ──
-            const profileResults = await query.getMany();
-            if (profileResults.length === 0 && profile) {
-                return this.productsRepository.createQueryBuilder('product')
-                    .leftJoinAndSelect('product.category', 'category')
-                    .leftJoinAndSelect('product.brand', 'brand')
-                    .where(
-                        '(product.title ILIKE :fs OR product.description ILIKE :fs OR category.name ILIKE :fs OR brand.name ILIKE :fs)',
-                        { fs: `%${normalizedSearch}%` },
-                    )
-                    .orderBy('product.createdAt', 'DESC')
-                    .getMany();
-            }
-            return profileResults;
         }
 
         if (minPrice != null && !Number.isNaN(Number(minPrice))) {
@@ -120,26 +119,26 @@ export class ProductsService {
         if (color) {
             query.andWhere(
                 `EXISTS (
-          SELECT 1 FROM jsonb_array_elements(COALESCE(product.variants, '[]'::jsonb)) v
-          WHERE lower(COALESCE(v->>'type', v->>'name', '')) = 'color'
-            AND EXISTS (
-              SELECT 1 FROM jsonb_array_elements_text(COALESCE(v->'options', '[]'::jsonb)) opt
-              WHERE lower(opt) = lower(:colorVal)
-            )
-        )`,
+                  SELECT 1 FROM jsonb_array_elements(COALESCE(product.variants, '[]'::jsonb)) v
+                  WHERE lower(COALESCE(v->>'type', v->>'name', '')) = 'color'
+                    AND EXISTS (
+                      SELECT 1 FROM jsonb_array_elements_text(COALESCE(v->'options', '[]'::jsonb)) opt
+                      WHERE lower(opt) = lower(:colorVal)
+                    )
+                )`,
                 { colorVal: color },
             );
         }
         if (size) {
             query.andWhere(
                 `EXISTS (
-          SELECT 1 FROM jsonb_array_elements(COALESCE(product.variants, '[]'::jsonb)) v
-          WHERE lower(COALESCE(v->>'type', v->>'name', '')) IN ('size', 'storage', 'ram')
-            AND EXISTS (
-              SELECT 1 FROM jsonb_array_elements_text(COALESCE(v->'options', '[]'::jsonb)) opt
-              WHERE lower(opt) = lower(:sizeVal)
-            )
-        )`,
+                  SELECT 1 FROM jsonb_array_elements(COALESCE(product.variants, '[]'::jsonb)) v
+                  WHERE lower(COALESCE(v->>'type', v->>'name', '')) IN ('size', 'storage', 'ram')
+                    AND EXISTS (
+                      SELECT 1 FROM jsonb_array_elements_text(COALESCE(v->'options', '[]'::jsonb)) opt
+                      WHERE lower(opt) = lower(:sizeVal)
+                    )
+                )`,
                 { sizeVal: size },
             );
         }
@@ -149,7 +148,67 @@ export class ProductsService {
         else if (sortBy === 'rating_desc') query.orderBy('product.rating', 'DESC');
         else query.orderBy('product.createdAt', 'DESC');
 
-        return query.getMany();
+        let results = await query.getMany();
+
+        // ── Fallback fallback broad search if profile search yielded 0 items ──
+        if (results.length === 0 && search) {
+            const normalizedSearch = search.toLowerCase();
+            const fallbackQuery = this.productsRepository.createQueryBuilder('product')
+                .leftJoinAndSelect('product.category', 'category')
+                .leftJoinAndSelect('product.brand', 'brand')
+                .where(
+                    '(product.title ILIKE :fs OR product.description ILIKE :fs OR category.name ILIKE :fs OR brand.name ILIKE :fs)',
+                    { fs: `%${normalizedSearch}%` },
+                );
+
+            if (minPrice != null && !Number.isNaN(Number(minPrice))) {
+                fallbackQuery.andWhere('product.price >= :minPrice', { minPrice: Number(minPrice) });
+            }
+            if (maxPrice != null && !Number.isNaN(Number(maxPrice))) {
+                fallbackQuery.andWhere('product.price <= :maxPrice', { maxPrice: Number(maxPrice) });
+            }
+            if (minRating != null && !Number.isNaN(Number(minRating))) {
+                fallbackQuery.andWhere('product.rating >= :minRating', { minRating: Number(minRating) });
+            }
+            if (brand) {
+                fallbackQuery.andWhere('brand.name ILIKE :brand', { brand: `%${brand}%` });
+            }
+            if (color) {
+                fallbackQuery.andWhere(
+                    `EXISTS (
+                      SELECT 1 FROM jsonb_array_elements(COALESCE(product.variants, '[]'::jsonb)) v
+                      WHERE lower(COALESCE(v->>'type', v->>'name', '')) = 'color'
+                        AND EXISTS (
+                          SELECT 1 FROM jsonb_array_elements_text(COALESCE(v->'options', '[]'::jsonb)) opt
+                          WHERE lower(opt) = lower(:colorVal)
+                        )
+                    )`,
+                    { colorVal: color },
+                );
+            }
+            if (size) {
+                fallbackQuery.andWhere(
+                    `EXISTS (
+                      SELECT 1 FROM jsonb_array_elements(COALESCE(product.variants, '[]'::jsonb)) v
+                      WHERE lower(COALESCE(v->>'type', v->>'name', '')) IN ('size', 'storage', 'ram')
+                        AND EXISTS (
+                          SELECT 1 FROM jsonb_array_elements_text(COALESCE(v->'options', '[]'::jsonb)) opt
+                          WHERE lower(opt) = lower(:sizeVal)
+                        )
+                    )`,
+                    { sizeVal: size },
+                );
+            }
+
+            if (sortBy === 'price_asc') fallbackQuery.orderBy('product.price', 'ASC');
+            else if (sortBy === 'price_desc') fallbackQuery.orderBy('product.price', 'DESC');
+            else if (sortBy === 'rating_desc') fallbackQuery.orderBy('product.rating', 'DESC');
+            else fallbackQuery.orderBy('product.createdAt', 'DESC');
+
+            results = await fallbackQuery.getMany();
+        }
+
+        return results;
     }
 
     async getFilterOptions(search?: string): Promise<{
@@ -283,7 +342,7 @@ export class ProductsService {
                 images: item.images,
                 rating: item.rating,
                 sku: `SKU-EXTRA-${Date.now()}-${inserted}`,
-                variants: buildVariants(item.category),
+                variants: buildVariants(item.category, item.title),
             } as DeepPartial<Product>);
             inserted++;
         }

@@ -93,7 +93,7 @@ async function bootstrap() {
             images: item.images && item.images.length ? item.images : [item.thumbnail],
             rating: item.rating || 4.5,
             sku: item.sku || `SKU-${item.id}`,
-            variants: buildVariants(catName),
+            variants: buildVariants(catName, item.title),
             attributes: generateAttributes(catName),
             isApproved: true,
         } as any);
@@ -130,7 +130,7 @@ async function bootstrap() {
             images: item.images,
             rating: item.rating,
             sku: `SKU-EXTRA-${extraIndex}-${item.title.slice(0, 5).replace(/\s/g, '')}`,
-            variants: buildVariants(item.category),
+            variants: buildVariants(item.category, item.title),
             attributes: item.attributes || generateAttributes(item.category),
             isApproved: true,
         } as any);

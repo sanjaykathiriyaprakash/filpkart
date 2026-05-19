@@ -4,6 +4,7 @@ import { Star, Heart, ChevronLeft, ChevronDown, Search as SearchIcon } from 'luc
 import { Link, useSearchParams } from 'react-router-dom';
 import { API_BASE, buildProductsQuery } from '../lib/api';
 import BrandDirectory from '../components/BrandDirectory';
+import ProductFilters, { type ProductFilterState } from '../components/ProductFilters';
 
 interface ProductType {
     id: string;
@@ -129,31 +130,31 @@ export default function Search() {
     const q = searchParams.get('q') || '';
     const [products, setProducts] = useState<ProductType[]>([]);
     const [loading, setLoading] = useState(false);
+    const [filters, setFilters] = useState<ProductFilterState>({});
+    const [prevQ, setPrevQ] = useState(q);
 
-    // Filters state
-    const [brandSearch, setBrandSearch] = useState('');
-    const [brandExpanded, setBrandExpanded] = useState(true);
-    const [categoriesExpanded, setCategoriesExpanded] = useState(true);
+    if (q !== prevQ) {
+        setPrevQ(q);
+        setFilters({});
+    }
 
     useEffect(() => {
-        if (!q) return;
         setLoading(true);
-        const url = buildProductsQuery({ search: q });
+        const url = buildProductsQuery({
+            search: q || undefined,
+            minPrice: filters.minPrice,
+            maxPrice: filters.maxPrice,
+            minRating: filters.minRating,
+            brand: filters.brand,
+            sortBy: filters.sortBy,
+            color: filters.color,
+            size: filters.size,
+        });
         axios.get(url)
             .then(r => setProducts(r.data))
             .catch(() => setProducts([]))
             .finally(() => setLoading(false));
-    }, [q]);
-
-    // Also fetch all products if no query
-    useEffect(() => {
-        if (q) return;
-        setLoading(true);
-        axios.get(`${API_BASE}/products`)
-            .then(r => setProducts(r.data))
-            .catch(() => setProducts([]))
-            .finally(() => setLoading(false));
-    }, [q]);
+    }, [q, filters]);
 
     const getCat = (p: ProductType) => (p.category as { name?: string })?.name || (typeof p.category === 'string' ? p.category : '');
     const getBrand = (p: ProductType) => (p.brand as { name?: string })?.name || (typeof p.brand === 'string' ? p.brand : '');
@@ -166,123 +167,11 @@ export default function Search() {
             <div className="max-w-screen-xl mx-auto px-2">
                 <div className="flex flex-col md:flex-row gap-2 items-start">
                     
-                    {/* Left Sidebar - width: 280px approx */}
-                    <div className="hidden md:block w-[280px] bg-white rounded-sm shadow-sm flex-shrink-0 border border-gray-100">
-                        {/* Header */}
-                        <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
-                            <h2 className="text-lg font-semibold text-gray-800">Filters</h2>
-                            <button className="text-[13px] font-medium text-[#2874f0] uppercase tracking-wide hover:underline">Clear All</button>
-                        </div>
-                        
-                        {/* Active Filters */}
-                        <div className="px-4 py-3 border-b border-gray-200">
-                            <div className="flex flex-wrap gap-2">
-                                <div className="bg-gray-100 px-2 py-1 rounded-[3px] text-xs text-gray-800 flex items-center gap-1.5 shadow-sm border border-gray-200">
-                                    <span className="text-gray-500 hover:text-gray-800 cursor-pointer text-sm font-bold leading-none">×</span>
-                                    {q ? q : 'Men'}
-                                </div>
-                            </div>
-                        </div>
-2.
-                        {/* Categories Accordion */}
-                        <div className="px-4 py-4 border-b border-gray-200">
-                            <div 
-                                className="flex justify-between items-center cursor-pointer uppercase text-xs font-bold text-gray-800 mb-2 tracking-wide"
-                                onClick={() => setCategoriesExpanded(!categoriesExpanded)}
-                            >
-                                CATEGORIES
-                                <ChevronDown className={`w-4 h-4 transition-transform ${categoriesExpanded ? 'rotate-180' : ''}`} />
-                            </div>
-                            {categoriesExpanded && (
-                                <div className="mt-2 text-[13px]">
-                                    <div className="flex items-center text-gray-500 mb-2 cursor-pointer hover:text-[#2874f0] font-medium">
-                                        <ChevronLeft className="w-3.5 h-3.5 mr-1" />
-                                        {config.categoryParent}
-                                    </div>
-                                    <div className="pl-5 space-y-2.5 mt-1">
-                                        {config.categoryChildren.map((cat, i) => (
-                                            <div 
-                                                key={i} 
-                                                className={`cursor-pointer hover:text-[#2874f0] ${cat === config.activeCategory ? 'text-[#2874f0] font-semibold' : 'text-gray-800'}`}
-                                            >
-                                                {cat}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* BRAND Accordion */}
-                        <div className="px-4 py-4 border-b border-gray-200">
-                            <div 
-                                className="flex justify-between items-center cursor-pointer uppercase text-xs font-bold text-gray-800 mb-3 tracking-wide"
-                                onClick={() => setBrandExpanded(!brandExpanded)}
-                            >
-                                BRAND
-                                <ChevronDown className={`w-4 h-4 transition-transform ${brandExpanded ? 'rotate-180' : ''}`} />
-                            </div>
-                            {brandExpanded && (
-                                <div className="mt-1">
-                                    <div className="relative mb-3">
-                                        <SearchIcon className="absolute left-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
-                                        <input 
-                                            type="text" 
-                                            placeholder="Search Brand" 
-                                            className="w-full pl-5 py-1 text-[13px] border-b-2 border-transparent focus:border-[#2874f0] outline-none text-gray-800 transition-colors"
-                                            value={brandSearch}
-                                            onChange={(e) => setBrandSearch(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="space-y-2.5 max-h-[200px] overflow-y-auto custom-scrollbar">
-                                        {config.brands.filter(b => b.toLowerCase().includes(brandSearch.toLowerCase())).map((brand, i) => {
-                                            const isChecked = q.toLowerCase().includes(brand.toLowerCase());
-                                            return (
-                                                <label key={i} className="flex items-center gap-3 cursor-pointer group">
-                                                    <input 
-                                                        type="checkbox" 
-                                                        checked={isChecked}
-                                                        onChange={() => {}}
-                                                        className="w-3.5 h-3.5 border-gray-300 rounded-[3px] text-[#2874f0] focus:ring-[#2874f0] cursor-pointer" 
-                                                    />
-                                                    <span className="text-[13px] text-gray-800 group-hover:text-gray-900 truncate" title={brand}>{brand}</span>
-                                                </label>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Custom Dynamic Filter Accordion */}
-                        <div className="px-4 py-4 border-b border-gray-200">
-                            <div className="flex justify-between items-center cursor-pointer uppercase text-xs font-bold text-gray-800 mb-3 tracking-wide">
-                                {config.extraFilterName}
-                                <ChevronDown className="w-4 h-4" />
-                            </div>
-                            <div className="space-y-2.5 max-h-[200px] overflow-y-auto custom-scrollbar">
-                                {config.extraFilterOptions.map((opt, i) => (
-                                    <label key={i} className="flex items-center gap-3 cursor-pointer group">
-                                        <input type="checkbox" className="w-3.5 h-3.5 border-gray-300 rounded-[3px] text-[#2874f0] focus:ring-[#2874f0] cursor-pointer" />
-                                        <span className="text-[13px] text-gray-800 group-hover:text-gray-900 truncate">{opt}</span>
-                                    </label>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* TYPE */}
-                        <div className="px-4 py-4 border-b border-gray-200 flex justify-between items-center cursor-pointer uppercase text-xs font-bold text-gray-800 tracking-wide">
-                            TYPE
-                            <ChevronDown className="w-4 h-4" />
-                        </div>
-
-                        {/* GENDER */}
-                        <div className="px-4 py-4 border-b border-gray-200 flex justify-between items-center cursor-pointer uppercase text-xs font-bold text-gray-800 tracking-wide">
-                            GENDER
-                            <ChevronDown className="w-4 h-4" />
-                        </div>
-
-                    </div>
+                    <ProductFilters
+                        search={q || undefined}
+                        filters={filters}
+                        onChange={setFilters}
+                    />
 
                     {/* Right Main Content */}
                     <div className="flex-1 w-full bg-white rounded-sm shadow-sm p-4 border border-gray-100 min-h-screen">
@@ -311,10 +200,30 @@ export default function Search() {
                             </h1>
                             <div className="flex items-center gap-6 mt-3 text-[14px] text-gray-800">
                                 <span className="font-semibold text-gray-800">Sort By</span>
-                                <button className="text-[#2874f0] font-semibold border-b-[3px] border-[#2874f0] pb-1.5 -mb-[9px]">Popularity</button>
-                                <button className="hover:text-[#2874f0] pb-1.5 transition-colors">Price -- Low to High</button>
-                                <button className="hover:text-[#2874f0] pb-1.5 transition-colors">Price -- High to Low</button>
-                                <button className="hover:text-[#2874f0] pb-1.5 transition-colors">Newest First</button>
+                                <button 
+                                    onClick={() => setFilters(f => ({ ...f, sortBy: 'popularity' }))}
+                                    className={`pb-1.5 transition-colors ${(!filters.sortBy || filters.sortBy === 'popularity') ? 'text-[#2874f0] font-semibold border-b-[3px] border-[#2874f0] -mb-[9px]' : 'hover:text-[#2874f0]'}`}
+                                >
+                                    Popularity
+                                </button>
+                                <button 
+                                    onClick={() => setFilters(f => ({ ...f, sortBy: 'price_asc' }))}
+                                    className={`pb-1.5 transition-colors ${filters.sortBy === 'price_asc' ? 'text-[#2874f0] font-semibold border-b-[3px] border-[#2874f0] -mb-[9px]' : 'hover:text-[#2874f0]'}`}
+                                >
+                                    Price -- Low to High
+                                </button>
+                                <button 
+                                    onClick={() => setFilters(f => ({ ...f, sortBy: 'price_desc' }))}
+                                    className={`pb-1.5 transition-colors ${filters.sortBy === 'price_desc' ? 'text-[#2874f0] font-semibold border-b-[3px] border-[#2874f0] -mb-[9px]' : 'hover:text-[#2874f0]'}`}
+                                >
+                                    Price -- High to Low
+                                </button>
+                                <button 
+                                    onClick={() => setFilters(f => ({ ...f, sortBy: '' }))}
+                                    className={`pb-1.5 transition-colors ${filters.sortBy === '' ? 'text-[#2874f0] font-semibold border-b-[3px] border-[#2874f0] -mb-[9px]' : 'hover:text-[#2874f0]'}`}
+                                >
+                                    Newest First
+                                </button>
                             </div>
                         </div>
 

@@ -17,6 +17,7 @@ export const SEARCH_PROFILES: Record<string, SearchProfile> = {
 
     // ── Electronics ──────────────────────────────────────────────────────────
     electronics:                    { categories: ['laptops', 'smartphones', 'mobile-accessories'] },
+    mobile:                         { categories: ['smartphones'] },
     mobiles:                        { categories: ['smartphones'] },
     smartphones:                    { categories: ['smartphones'] },
     laptops:                        { categories: ['laptops'] },
@@ -70,14 +71,15 @@ export const SEARCH_PROFILES: Record<string, SearchProfile> = {
     'google nest':                  { categories: ['mobile-accessories'] },
     'network components':           { categories: ['mobile-accessories'] },
     routers:                        { categories: ['mobile-accessories'] },
-    televisions:                    { categories: ['televisions', 'kitchen-accessories'] },
-    television:                     { categories: ['televisions', 'kitchen-accessories'] },
+    televisions:                    { categories: ['televisions', 'appliances'] },
+    television:                     { categories: ['televisions', 'appliances'] },
     'smart tvs':                    { categories: ['televisions'] },
 
     // ── TVs & Appliances ─────────────────────────────────────────────────────
-    'tvs & appliances':             { categories: ['televisions', 'kitchen-accessories'] },
-    'new launches':                 { categories: ['televisions', 'kitchen-accessories'] },
-    'new launch':                   { categories: ['televisions', 'kitchen-accessories'] },
+    appliances:                     { categories: ['appliances'] },
+    'tvs & appliances':             { categories: ['televisions', 'appliances'] },
+    'new launches':                 { categories: ['televisions', 'appliances'] },
+    'new launch':                   { categories: ['televisions', 'appliances'] },
     'smart & ultra hd':             { categories: ['televisions'] },
     'shop by screen size':          { categories: ['televisions'] },
     '24 & below':                   { categories: ['televisions'] },
@@ -85,53 +87,53 @@ export const SEARCH_PROFILES: Record<string, SearchProfile> = {
     '39 - 43':                      { categories: ['televisions'] },
     '49 - 55':                      { categories: ['televisions'] },
     '60 & above':                   { categories: ['televisions'] },
-    'shop by brand':                { categories: ['televisions', 'kitchen-accessories'] },
-    'buying guides':                { categories: ['televisions', 'kitchen-accessories'] },
-    'top brands':                   { categories: ['televisions', 'kitchen-accessories', 'smartphones', 'laptops'] },
-    'washing machine':              { categories: ['kitchen-accessories'] },
-    'washing machines':             { categories: ['kitchen-accessories'] },
-    'refrigerator':                 { categories: ['kitchen-accessories'] },
-    'fully automatic front load':   { categories: ['kitchen-accessories'] },
-    'semi automatic top load':      { categories: ['kitchen-accessories'] },
-    'fully automatic top load':     { categories: ['kitchen-accessories'] },
-    'air conditioners':             { categories: ['kitchen-accessories'] },
-    'inverter ac':                  { categories: ['kitchen-accessories'] },
-    'split acs':                    { categories: ['kitchen-accessories'] },
-    'window acs':                   { categories: ['kitchen-accessories'] },
-    refrigerators:                  { categories: ['kitchen-accessories'] },
-    'single door':                  { categories: ['kitchen-accessories'] },
-    'double door':                  { categories: ['kitchen-accessories'] },
-    'triple door':                  { categories: ['kitchen-accessories'] },
-    'side by side':                 { categories: ['kitchen-accessories'] },
-    convertible:                    { categories: ['kitchen-accessories'] },
-    'kitchen appliances':           { categories: ['kitchen-accessories'] },
-    'microwave ovens':              { categories: ['kitchen-accessories'] },
-    'oven toaster grills (otg)':    { categories: ['kitchen-accessories'] },
-    'juicer/mixer/grinder':         { categories: ['kitchen-accessories'] },
-    'electric kettle':              { categories: ['kitchen-accessories'] },
-    'induction cooktops':           { categories: ['kitchen-accessories'] },
-    chimneys:                       { categories: ['kitchen-accessories'] },
-    'hand blenders':                { categories: ['kitchen-accessories'] },
-    'sandwich makers':              { categories: ['kitchen-accessories'] },
-    'pop up toasters':              { categories: ['kitchen-accessories'] },
-    'electric cookers':             { categories: ['kitchen-accessories'] },
-    'wet grinders':                 { categories: ['kitchen-accessories'] },
-    'food processors':              { categories: ['kitchen-accessories'] },
-    'coffee makers':                { categories: ['kitchen-accessories'] },
-    dishwashers:                    { categories: ['kitchen-accessories'] },
-    'healthy living appliances':    { categories: ['kitchen-accessories'] },
-    'small home appliances':        { categories: ['kitchen-accessories'] },
-    fans:                           { categories: ['kitchen-accessories'] },
-    'water purifiers':              { categories: ['kitchen-accessories'] },
-    'air coolers':                  { categories: ['kitchen-accessories'] },
-    inverters:                      { categories: ['kitchen-accessories'] },
-    'vacuum cleaners':              { categories: ['kitchen-accessories'] },
-    'sewing machines':              { categories: ['kitchen-accessories'] },
-    'voltage stabilizers':          { categories: ['kitchen-accessories'] },
-    'water geysers':                { categories: ['kitchen-accessories'] },
-    'immersion rods':               { categories: ['kitchen-accessories'] },
-    'air fryers':                   { categories: ['kitchen-accessories'] },
-    'mixer grinder':                { categories: ['kitchen-accessories'] },
+    'shop by brand':                { categories: ['televisions', 'appliances'] },
+    'buying guides':                { categories: ['televisions', 'appliances'] },
+    'top brands':                   { categories: ['televisions', 'appliances', 'smartphones', 'laptops'] },
+    'washing machine':              { categories: ['appliances'], titleTerms: ['washing', 'washer'] },
+    'washing machines':             { categories: ['appliances'], titleTerms: ['washing', 'washer'] },
+    'refrigerator':                 { categories: ['appliances'], titleTerms: ['refrigerator', 'fridge'] },
+    'fully automatic front load':   { categories: ['appliances'], titleTerms: ['fully automatic', 'front load'] },
+    'semi automatic top load':      { categories: ['appliances'], titleTerms: ['semi automatic', 'top load'] },
+    'fully automatic top load':     { categories: ['appliances'], titleTerms: ['fully automatic', 'top load'] },
+    'air conditioners':             { categories: ['appliances'], titleTerms: ['air conditioner', 'ac'] },
+    'inverter ac':                  { categories: ['appliances'], titleTerms: ['inverter', 'ac'] },
+    'split acs':                    { categories: ['appliances'], titleTerms: ['split', 'ac'] },
+    'window acs':                   { categories: ['appliances'], titleTerms: ['window', 'ac'] },
+    refrigerators:                  { categories: ['appliances'], titleTerms: ['refrigerator', 'fridge'] },
+    'single door':                  { categories: ['appliances'], titleTerms: ['single door', 'refrigerator'] },
+    'double door':                  { categories: ['appliances'], titleTerms: ['double door', 'refrigerator'] },
+    'triple door':                  { categories: ['appliances'], titleTerms: ['triple door', 'refrigerator'] },
+    'side by side':                 { categories: ['appliances'], titleTerms: ['side by side', 'refrigerator'] },
+    convertible:                    { categories: ['appliances'], titleTerms: ['convertible', 'refrigerator'] },
+    'kitchen appliances':           { categories: ['appliances'], titleTerms: ['kitchen'] },
+    'microwave ovens':              { categories: ['appliances'], titleTerms: ['microwave'] },
+    'oven toaster grills (otg)':    { categories: ['appliances'], titleTerms: ['otg', 'oven', 'toaster', 'grill'] },
+    'juicer/mixer/grinder':         { categories: ['appliances'] },
+    'electric kettle':              { categories: ['appliances'] },
+    'induction cooktops':           { categories: ['appliances'] },
+    chimneys:                       { categories: ['appliances'] },
+    'hand blenders':                { categories: ['appliances'] },
+    'sandwich makers':              { categories: ['appliances'] },
+    'pop up toasters':              { categories: ['appliances'] },
+    'electric cookers':             { categories: ['appliances'] },
+    'wet grinders':                 { categories: ['appliances'] },
+    'food processors':              { categories: ['appliances'] },
+    'coffee makers':                { categories: ['appliances'] },
+    dishwashers:                    { categories: ['appliances'] },
+    'healthy living appliances':    { categories: ['appliances'] },
+    'small home appliances':        { categories: ['appliances'] },
+    fans:                           { categories: ['appliances'] },
+    'water purifiers':              { categories: ['appliances'] },
+    'air coolers':                  { categories: ['appliances'] },
+    inverters:                      { categories: ['appliances'] },
+    'vacuum cleaners':              { categories: ['appliances'] },
+    'sewing machines':              { categories: ['appliances'] },
+    'voltage stabilizers':          { categories: ['appliances'] },
+    'water geysers':                { categories: ['appliances'] },
+    'immersion rods':               { categories: ['appliances'] },
+    'air fryers':                   { categories: ['appliances'] },
+    'mixer grinder':                { categories: ['appliances'] },
     'kitchen accessories':          { categories: ['kitchen-accessories'] },
 
     // ── Men ───────────────────────────────────────────────────────────────────
@@ -144,24 +146,25 @@ export const SEARCH_PROFILES: Record<string, SearchProfile> = {
     topwear:                        { categories: ['mens-shirts'] },
     'formal shirts':                { categories: ['mens-shirts'] },
     'casual shirts':                { categories: ['mens-shirts'] },
-    shirts:                         { categories: ['mens-shirts'] },
-    jeans:                          { categories: ['mens-shirts'] },
-    'casual trousers':              { categories: ['mens-shirts'] },
-    'formal trousers':              { categories: ['mens-shirts'] },
-    trousers:                       { categories: ['mens-shirts'] },
-    'track pants':                  { categories: ['mens-shirts'] },
-    shorts:                         { categories: ['mens-shirts'] },
-    cargos:                         { categories: ['mens-shirts'] },
-    'three fourths':                { categories: ['mens-shirts'] },
-    'suits, blazers & waistcoats':  { categories: ['mens-shirts'] },
-    'suits, blazers':               { categories: ['mens-shirts'] },
-    'ties, socks, caps & more':     { categories: ['mens-shirts'] },
-    fabrics:                        { categories: ['mens-shirts'] },
-    'winter wear':                  { categories: ['mens-shirts'] },
-    sweatshirts:                    { categories: ['mens-shirts'] },
-    jackets:                        { categories: ['mens-shirts'] },
-    sweater:                        { categories: ['mens-shirts'] },
-    tracksuits:                     { categories: ['mens-shirts'] },
+    shirts:                         { categories: ['mens-shirts'], titleTerms: ['shirt', 't-shirt', 'tshirt', 'polo'] },
+    shirt:                          { categories: ['mens-shirts'], titleTerms: ['shirt', 't-shirt', 'tshirt', 'polo'] },
+    jeans:                          { categories: ['mens-shirts'], titleTerms: ['jeans', 'denim'] },
+    'casual trousers':              { categories: ['mens-shirts'], titleTerms: ['trouser', 'pant'] },
+    'formal trousers':              { categories: ['mens-shirts'], titleTerms: ['trouser', 'pant'] },
+    trousers:                       { categories: ['mens-shirts'], titleTerms: ['trouser', 'pant'] },
+    'track pants':                  { categories: ['mens-shirts'], titleTerms: ['track pant', 'jogger'] },
+    shorts:                         { categories: ['mens-shirts'], titleTerms: ['shorts'] },
+    cargos:                         { categories: ['mens-shirts'], titleTerms: ['cargo'] },
+    'three fourths':                { categories: ['mens-shirts'], titleTerms: ['three fourth'] },
+    'suits, blazers & waistcoats':  { categories: ['mens-shirts'], titleTerms: ['suit', 'blazer', 'waistcoat'] },
+    'suits, blazers':               { categories: ['mens-shirts'], titleTerms: ['suit', 'blazer'] },
+    'ties, socks, caps & more':     { categories: ['mens-shirts'], titleTerms: ['tie', 'sock', 'cap'] },
+    fabrics:                        { categories: ['mens-shirts'], titleTerms: ['fabric'] },
+    'winter wear':                  { categories: ['mens-shirts'], titleTerms: ['winter', 'jacket', 'sweater', 'sweatshirt'] },
+    sweatshirts:                    { categories: ['mens-shirts'], titleTerms: ['sweatshirt', 'hoodie'] },
+    jackets:                        { categories: ['mens-shirts'], titleTerms: ['jacket'] },
+    sweater:                        { categories: ['mens-shirts'], titleTerms: ['sweater'] },
+    tracksuits:                     { categories: ['mens-shirts'], titleTerms: ['tracksuit'] },
     'ethnic wear':                  { categories: ['mens-shirts', 'sarees', 'kurtas', 'lehengas'] },
     sherwanis:                      { categories: ['mens-shirts'] },
     'ethnic pyjama':                { categories: ['mens-shirts'] },
@@ -177,6 +180,9 @@ export const SEARCH_PROFILES: Record<string, SearchProfile> = {
     'night suits':                  { categories: ['mens-shirts'] },
     'raincoats & windcheaters':     { categories: ['mens-shirts'] },
     'footwear':                     { categories: ['mens-shoes', 'womens-shoes'] },
+    'shoe':                         { categories: ['mens-shoes', 'womens-shoes'] },
+    'shoes':                        { categories: ['mens-shoes', 'womens-shoes'] },
+    'shooes':                       { categories: ['mens-shoes', 'womens-shoes'] },
     'mens-shoes':                   { categories: ['mens-shoes'] },
     'sports shoes':                 { categories: ['mens-shoes', 'sports-accessories'] },
     'casual shoes':                 { categories: ['mens-shoes'] },
@@ -460,6 +466,50 @@ export const SEARCH_PROFILES: Record<string, SearchProfile> = {
 
 export function resolveSearchProfile(search?: string): SearchProfile | null {
     if (!search?.trim()) return null;
-    const key = search.trim().toLowerCase();
-    return SEARCH_PROFILES[key] || null;
+    let key = search.trim().toLowerCase();
+    
+    // Direct match
+    if (SEARCH_PROFILES[key]) {
+        return SEARCH_PROFILES[key];
+    }
+
+    // Common variant normalization
+    if (key === 'shooes' || key === 'shoe' || key === 'shoes') {
+        return SEARCH_PROFILES['footwear'];
+    }
+    if (key === 'mobile') {
+        return SEARCH_PROFILES['mobiles'];
+    }
+
+    // Trailing 'ies' and 'y' variations (e.g. battery -> batteries, accessory -> accessories)
+    if (key.endsWith('ies')) {
+        const sing = key.slice(0, -3) + 'y';
+        if (SEARCH_PROFILES[sing]) return SEARCH_PROFILES[sing];
+    }
+    if (key.endsWith('y')) {
+        const plur = key.slice(0, -1) + 'ies';
+        if (SEARCH_PROFILES[plur]) return SEARCH_PROFILES[plur];
+    }
+    
+    // Trailing 'es' variations (e.g. dress -> dresses, watch -> watches)
+    if (key.endsWith('es')) {
+        const sing = key.slice(0, -2);
+        if (SEARCH_PROFILES[sing]) return SEARCH_PROFILES[sing];
+    }
+    if (!key.endsWith('s')) {
+        const plur = key + 'es';
+        if (SEARCH_PROFILES[plur]) return SEARCH_PROFILES[plur];
+    }
+
+    // Trailing 's' plural/singular variations
+    if (key.endsWith('s')) {
+        const sing = key.slice(0, -1);
+        if (SEARCH_PROFILES[sing]) return SEARCH_PROFILES[sing];
+    }
+    if (!key.endsWith('s')) {
+        const plur = key + 's';
+        if (SEARCH_PROFILES[plur]) return SEARCH_PROFILES[plur];
+    }
+    
+    return null;
 }

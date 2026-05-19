@@ -12,6 +12,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Wishlist from './pages/Wishlist';
 import Search from './pages/Search';
+import Orders from './pages/Orders';
 // Admin pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
@@ -109,6 +110,7 @@ function App() {
               <Route path="/cart" element={<><Navbar /><Cart /><Footer /></>} />
               <Route path="/checkout" element={<><Navbar /><Checkout /><Footer /></>} />
               <Route path="/wishlist" element={<><Navbar /><Wishlist /><Footer /></>} />
+              <Route path="/orders" element={<><Navbar /><Orders /><Footer /></>} />
             </Routes>
           </main>
         </div>

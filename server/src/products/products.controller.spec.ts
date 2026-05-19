@@ -43,13 +43,13 @@ describe('ProductsController', () => {
     });
 
     it('should retrieve all products when no search is provided', async () => {
-        const result = await controller.findAll('', undefined as any, undefined as any, undefined as any, undefined as any);
+        const result = await controller.findAll('', undefined as any, undefined as any, undefined as any, undefined as any, undefined as any, undefined as any, undefined as any);
         expect(result).toHaveLength(2);
-        expect(mockProductsService.findAll).toHaveBeenCalledWith('', undefined, undefined, undefined, undefined);
+        expect(mockProductsService.findAll).toHaveBeenCalledWith('', undefined, undefined, undefined, undefined, undefined, undefined, undefined);
     });
 
     it('should retrieve filtered products when a search is provided', async () => {
-        const result = await controller.findAll('Smartphone', undefined as any, undefined as any, undefined as any, undefined as any);
+        const result = await controller.findAll('Smartphone', undefined as any, undefined as any, undefined as any, undefined as any, undefined as any, undefined as any, undefined as any);
         expect(result).toHaveLength(1);
         expect(result[0].title).toEqual('Smartphone');
     });
