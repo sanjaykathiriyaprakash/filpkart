@@ -6,7 +6,6 @@ import { logout } from '../store/slices/authSlice';
 import { ShoppingCart, Star, ChevronRight, ChevronLeft, Search, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import { Link, useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import BannerCarousel from '../components/BannerCarousel';
-import BrandDirectory from '../components/BrandDirectory';
 import ProductFilters, { type ProductFilterState } from '../components/ProductFilters';
 import { CategoryNavIcon } from '../components/CategoryNavIcons';
 import AutoCategoryLanding from '../components/AutoCategoryLanding';
@@ -14,6 +13,7 @@ import { buildProductsQuery } from '../lib/api';
 import { API_BASE } from '../lib/api';
 import type { RootState } from '../store/store';
 import DeliveryLocationModal from '../components/DeliveryLocationModal';
+import BrandDirectory from '../components/BrandDirectory';
 
 const NAV_CATEGORIES = [
     { title: 'For You', search: '', path: '/' },
@@ -86,17 +86,41 @@ const WIDE_BANNER = {
     accent: '#000',
 };
 
-// ─── SEO text ──────────────────────────────────────────────────────────────
 const SEO_SECTIONS = [
     {
         heading: "Flipkart: India's Ultimate One-Stop Online Shopping Destination",
-        body: "Welcome to Flipkart, India's trusted and beloved e-commerce platform, revolutionising online shopping since 2007. With over 200 million users, 150 million+ products across 80+ categories, and a relentless focus on customer satisfaction, Flipkart isn't just an online store — it's your digital shopping companion.",
+        body: "Welcome to Flipkart, India's trusted and beloved e-commerce platform, revolutionising online shopping since 2007. With over 200 million users, 150 million+ products across 80+ categories, and a relentless focus on customer satisfaction, Flipkart isn't just an online store; it's your digital shopping companion. Be it the Flipkart app or the comprehensive Flipkart website, discover an unmatched universe of products, incredible Flipkart offers, blockbuster Flipkart sale events, and seamless service. From the latest gadgets to daily groceries, fashion must-haves to furniture solutions, Flipkart is your definitive destination for e-commerce in India, offering convenience, value, and reliability at every click. Experience the joy of buying online with India's homegrown leader!"
     },
     {
-        heading: 'What Can You Buy from Flipkart?',
-        body: "Mobile and Electronics · Fashion · Home and Kitchen Appliances · Beauty and Grooming · Groceries and Daily Essentials · Sports & Outdoors · Furniture · Toys & Baby Products · Books & Stationery — and much more.",
+        heading: "What Can You Buy From Flipkart?",
+        body: "Flipkart's strength lies in its incredible diversity. With offerings for every need, aspiration, and budget, you can dive into the meticulously curated categories for your needs: Mobile and Electronics · Fashion · Home and Kitchen Appliances · Beauty and Grooming · Groceries and Daily Essentials · Sports & Outdoors · Furniture · Toys & Baby Products · Books & Stationery — and much more."
     },
+    {
+        heading: "Flipkart Flights",
+        body: "Planning your next trip? Look no further than Flipkart Flights. Book domestic and international flights at the best prices with exclusive offers and zero convenience fee on cancellations. Enjoy a seamless booking experience and travel the world with Flipkart."
+    },
+    {
+        heading: "Flipkart Minutes",
+        body: "Need it now? Get it now with Flipkart Minutes. Experience hyper-local, ultra-fast delivery of groceries, fresh produce, and daily essentials delivered right to your doorstep in minutes. Quality and convenience, guaranteed."
+    },
+    {
+        heading: "Flipkart Reset",
+        body: "Give your old devices a new life and get the best value with Flipkart Reset. Buy expertly refurbished smartphones, laptops, and electronics that undergo rigorous quality checks. Enjoy premium tech at a fraction of the cost, completely certified and warrantied."
+    },
+    {
+        heading: "Flipkart Kilos",
+        body: "Stock up and save big with Flipkart Kilos. Buy your daily staples, groceries, and household essentials in bulk and enjoy wholesale prices. Perfect for large families or anyone looking to maximize savings on their monthly shopping."
+    },
+    {
+        heading: "Why Choose Flipkart?",
+        body: "Beyond the massive selection, we offer a range of benefits to enhance your shopping experience: No Cost EMI, Debit Card EMI, UPI, Pay Later, Flipkart Plus, and Priority Delivery. Our dedicated customer support is always here to help you."
+    },
+    {
+        heading: "Get Exclusive Offers",
+        body: "Download the Flipkart app today to unlock mobile-exclusive deals, personalized recommendations, and early access to our legendary Big Billion Days and Big Saving Days sales."
+    }
 ];
+
 
 export default function Home() {
     const { pathname } = useLocation();
@@ -419,6 +443,23 @@ export default function Home() {
                 </div>
             </div>
 
+            {/* ── Quick Links Strip ── */}
+            <div className="bg-white border-b border-gray-200 shadow-sm py-2.5 hidden md:block">
+                <div className="max-w-screen-xl mx-auto px-4 flex items-center justify-center gap-6 text-[13px] font-medium text-gray-700">
+                    <span className="hover:text-[#2874f0] cursor-pointer transition-colors">No Cost EMI</span>
+                    <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                    <span className="hover:text-[#2874f0] cursor-pointer transition-colors">Debit Card EMI</span>
+                    <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                    <span className="hover:text-[#2874f0] cursor-pointer transition-colors">UPI / Pay Later</span>
+                    <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                    <span className="hover:text-[#2874f0] cursor-pointer transition-colors">SuperCoin Pay</span>
+                    <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                    <span className="hover:text-[#2874f0] cursor-pointer transition-colors">Flipkart Wholesale</span>
+                    <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                    <span className="hover:text-[#2874f0] cursor-pointer transition-colors">Flipkart Creator Studio</span>
+                </div>
+            </div>
+
             <DeliveryLocationModal open={locationOpen} onClose={() => setLocationOpen(false)} />
 
             <div className="max-w-screen-xl mx-auto px-3 py-3">
@@ -457,16 +498,6 @@ export default function Home() {
                             />
                         ))}
 
-                        <BrandDirectory />
-
-                        <div className="bg-white rounded-sm shadow-sm p-6 mt-4 mb-4">
-                            {SEO_SECTIONS.map((s, i) => (
-                                <div key={i} className="mb-4">
-                                    <h2 className="text-base font-bold text-gray-800 mb-1">{s.heading}</h2>
-                                    <p className="text-sm text-gray-600 leading-relaxed">{s.body}</p>
-                                </div>
-                            ))}
-                        </div>
                     </>
                 ) : (
                     <div className="flex flex-col lg:flex-row gap-4">
@@ -506,62 +537,27 @@ export default function Home() {
                                     ))}
                                 </div>
                             )}
-                            <BrandDirectory />
+
                         </div>
                     </div>
                 )}
-            </div>
 
-            {/* ─── Brand Directory ─── */}
-            <div className="bg-white mt-4 border-t border-gray-200 py-6">
-                <div className="max-w-screen-xl mx-auto px-4">
-                    <h2 className="text-sm font-bold text-gray-700 mb-3">Top Stories : Brand Directory</h2>
-                    <div className="text-[11px] text-[#2874f0] leading-relaxed space-y-2">
-                        {[
-                            { label: 'MOBILES', links: ['4G Mobiles', 'Mobile Phones', 'Samsung Mobiles', 'Oppo Mobiles', 'Apple Phones', 'Realme Mobiles', 'Nothing Phones', 'OnePlus Mobiles', 'Blackberry Phones', 'POCO Mobiles', 'Feature Mobiles', 'Redmi Phones', 'Motorola Mobiles', 'Mobile Phones Under 5000', 'Mobiles Under 25000', '256 GB Mobiles', '512 GB Mobiles', '5.5 inch Mobiles'] },
-                            { label: 'CAMERA', links: ['Akaso Action Camera', 'Nikon Cameras', 'Canon Cameras', 'Sony Cameras', 'Instant Cameras', 'DSLR Mirrorless Cameras', 'GoPro Cameras', 'Insta360 Cameras', 'Drones', 'Sports Action Cameras'] },
-                            { label: 'LAPTOPS', links: ['All Laptops', 'Lenovo Laptops', 'Laptop Accessories', 'Dell Laptops', 'HP Laptops', 'Asus Laptops', 'Samsung Laptops', 'Laptops Under 25000', 'Laptops Under 40000', 'Laptops Under 30000', 'i5 Laptops', 'i7 Laptops'] },
-                            { label: 'TVS', links: ['LG TVs', 'Sony TVs', 'Samsung TV', 'Mi TV', 'LED TVs', 'Smart TV', 'Android TVs', '4K TVs', 'LED TVs Under 15000', 'Best TV Brands'] },
-                            { label: 'LARGE APPLIANCES', links: ['Air Conditioners', 'Refrigerators', 'Microwave Ovens', 'Air Fryers', 'Washing Machines', 'Water Purifiers', 'Induction Stove', 'Water Geyser', 'Room Heaters', '1.5 Ton ACs', 'Dish Washers', 'Electric Cookers'] },
-                            { label: 'CLOTHING', links: ['Sarees', 'Lehengas', 'Salwar Suits', 'Ethnic Sets', 'Womens Tops', "Women's Night Suits", "Women's Shirts", "Women's T-shirts", "Women's Jeans", "Women's Dresses", "Women's Trousers", "Women's Hoodies", "Women's Jackets", 'Casual Formals', 'Formal Shirts', "Men's T-shirts", "Men's Jeans", "Men's Track Pants", 'Blazers', "Men's Sweatshirts", "Men's Sweaters", "Men's Kurtas"] },
-                            { label: 'FOOTWEAR', links: ['Kids Footwear', "Men's Formal Shoes", "Men's Casual Shoes", "Men's Sneakers", "Men's Sports Shoes", "Men's Sandals", "Women's Sandals", "Women's Slippers & Flip Flops", 'Heels', "Women's Sneakers", "Women's Sports Shoes", 'Boys Shoes', 'Girls Shoes', 'Skechers Shoes', 'Crocs'] },
-                            { label: 'GROCERIES', links: ['Staples', 'Snacks & Beverages', 'Packaged Foods', 'Household Care', 'Personal & Baby Care', 'Masalas & Spices', 'Dals & Pulses', 'Ghee & Oils', 'Dry Fruits, Nuts & Seeds', 'Chocolates & Sweets', 'Laundry Detergents'] },
-                            { label: 'BEST SELLING ON FLIPKART', links: ['Google Pixel 10a', 'Infinix Note Edge', 'Motorola Signature', 'Oppo K14x 5G', 'Oppo Reno 15 Pro', 'Vivo V70', 'Chocolate Horlicks', 'Minimalist Face Cleanser', 'Simple Face Wash Pack', 'Mamaearth Anti Hair Fall Shampoo'] },
-                            { label: 'FURNITURE', links: ['Furniture Store', 'Beds', 'Dining Table Sets', 'Wardrobes', 'TV Units & Cabinets', 'Office & Study Chairs', 'Office & Study Tables', 'Sofa Sets', 'Mattress', 'Sofa Beds', 'Shoe Racks', 'Dressing Tables', 'Kitchen Cabinets', 'King Size Beds', 'Queen Size Beds'] },
-                            { label: 'BGMH', links: ['NCERT Books', 'Toys Online Store', 'Pens & Stationery', 'Beauty And Grooming', 'Makeup Kits', 'Body Face & Skin Care', 'Perfumes', 'Books Online Store', 'Automotive Accessories', 'Car Accessories', 'Bike Accessories', 'Food Products', 'Health Care', 'Health Supplements', 'Sports Equipment', 'Exercise & Fitness Accessories', 'Baby Care', 'Household Supplies', 'Home Cleaning & Bathroom Accessories', 'Home Decor', 'Home Improvement Tools', 'Kitchen Cookware & Serveware', 'Wallpapers', 'Home Furnishings', 'Wall Decor', 'Curtains', 'Festive Decor & Gifts'] },
-                        ].map(({ label, links }) => (
-                            <div key={label} className="flex flex-wrap gap-x-1 items-baseline">
-                                <span className="text-[11px] font-bold text-gray-700 mr-1 shrink-0">{label}</span>
-                                {links.map((link, i) => (
-                                    <span key={link}>
-                                        <a href="#" className="hover:underline">{link}</a>
-                                        {i < links.length - 1 && <span className="text-gray-400 mx-0.5">|</span>}
-                                    </span>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
+                {/* ── Brand Directory & SEO ── */}
+                <BrandDirectory />
+                <div className="bg-white rounded-sm shadow-sm p-6 mb-4 mt-4">
+                    {SEO_SECTIONS.map((s, i) => (
+                        <div key={i} className="mb-5 last:mb-0">
+                            <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">
+                                {s.heading}
+                            </h2>
+                            <p className="text-[11px] text-gray-500 leading-relaxed text-justify">
+                                {s.body}
+                            </p>
+                        </div>
+                    ))}
                 </div>
             </div>
 
-            {/* ─── SEO Description ─── */}
-            <div className="bg-white border-t border-gray-200 py-6">
-                <div className="max-w-screen-xl mx-auto px-4 text-[12px] text-gray-600 leading-relaxed space-y-3">
-                    <h2 className="text-sm font-bold text-gray-800">Flipkart: India's Ultimate One-Stop Online Shopping Destination</h2>
-                    <p>Welcome to Flipkart, India's trusted and beloved e-commerce platform, revolutionizing online shopping since 2007. With over 200 million users, 150 million+ products across 80+ categories, and a relentless focus on customer satisfaction, Flipkart isn't just an online store. It's your digital shopping companion.</p>
-                    <div>
-                        <h3 className="font-semibold text-gray-700 mt-2 mb-1">What Can You Buy from Flipkart?</h3>
-                        <p><strong>Mobile and Electronics:</strong> Flipkart has a wide range of mobiles with advanced features and the latest technology. Find budget-friendly smartphones, gaming phones, and refurbished options. Complement your device with accessories: back covers, screen protectors, fast chargers, power banks, wireless earbuds, smartwatches, fitness bands, and VR headsets.</p>
-                        <p className="mt-2"><strong>Home and Kitchen Appliances:</strong> Upgrade your home and kitchen appliances with Smart TVs, home theatre systems, soundbars, and streaming devices. Find energy-efficient refrigerators, air conditioners, microwaves, water purifiers, air coolers, and geysers from brands like LG, Samsung, Whirlpool, Godrej, and Voltas.</p>
-                        <p className="mt-2"><strong>Fashion and Beauty:</strong> Flipkart is India's Fashion Capital. Find ethnic wear, western wear, activewear, nightwear, and innerwear. Choose from handbags, watches, sunglasses, belts, and jewellery. Beauty and grooming products from top Indian and international brands await you.</p>
-                        <p className="mt-2"><strong>Home and Furniture:</strong> Upgrade the decor and functionality of your home with options for home decor, lighting, and home improvement. Explore modern home decor options like curtains, cushions, rugs, lamps, clocks, wall paintings, mirrors, photo frames, and decorative items.</p>
-                    </div>
-                    <div className="pt-2">
-                        <h3 className="font-semibold text-gray-700 mb-1">Get Exclusive Offers and Deals in Popular Sale Events</h3>
-                        <p>Flipkart offers you the opportunity of getting the products of your choice with regular sales events that bring you some great offers and discounts. With major annual events like the Big Billion Days, End of Season Sale (EOSS), GOAT Sale, and more to choose from, you can plan your new purchases to make sure you get the best benefits and discounts. Additionally, you can also choose to shop during smaller but equally attractive monthly sales to get the products you want.</p>
-                    </div>
-                </div>
-            </div>
             </main>
 
             {/* ─── Footer ─── */}

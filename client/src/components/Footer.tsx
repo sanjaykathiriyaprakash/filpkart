@@ -102,15 +102,15 @@ export default function Footer() {
                             <img src="https://static-assets-web.flixcart.com/batman-returns/batman-returns/p/images/sell-image-9de8ef.svg" alt="Become a Seller" className="w-[14px] h-[14px]" />
                             <span className="font-semibold text-white">Become a Seller</span>
                         </Link>
-                        <Link to="#" className="flex items-center gap-2 hover:underline transition-colors text-[14px]">
+                        <Link to="/advertise" className="flex items-center gap-2 hover:underline transition-colors text-[14px]">
                             <img src="https://static-assets-web.flixcart.com/batman-returns/batman-returns/p/images/advertise-image-866c0b.svg" alt="Advertise" className="w-[14px] h-[14px]" />
                             <span className="font-semibold text-white">Advertise</span>
                         </Link>
-                        <Link to="#" className="flex items-center gap-2 hover:underline transition-colors text-[14px]">
+                        <Link to="/gift-cards" className="flex items-center gap-2 hover:underline transition-colors text-[14px]">
                             <img src="https://static-assets-web.flixcart.com/batman-returns/batman-returns/p/images/gift-cards-image-d7ff24.svg" alt="Gift Cards" className="w-[14px] h-[14px]" />
                             <span className="font-semibold text-white">Gift Cards</span>
                         </Link>
-                        <Link to="#" className="flex items-center gap-2 hover:underline transition-colors text-[14px]">
+                        <Link to="/help" className="flex items-center gap-2 hover:underline transition-colors text-[14px]">
                             <img src="https://static-assets-web.flixcart.com/batman-returns/batman-returns/p/images/help-centre-image-c4ace8.svg" alt="Help Center" className="w-[14px] h-[14px]" />
                             <span className="font-semibold text-white">Help Center</span>
                         </Link>

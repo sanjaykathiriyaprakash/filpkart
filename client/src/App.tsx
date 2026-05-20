@@ -37,12 +37,33 @@ import SellerInventory from './pages/seller/SellerInventory';
 import SellerProfile from './pages/seller/SellerProfile';
 import SellerEditProduct from './pages/seller/SellerEditProduct';
 
+// Dropdown pages
+import Rewards from './pages/Rewards';
+import GiftCards from './pages/GiftCards';
+import Notifications from './pages/Notifications';
+import PlusZone from './pages/PlusZone';
+import HelpCenter from './pages/HelpCenter';
+import Advertise from './pages/Advertise';
+import DownloadApp from './pages/DownloadApp';
+
 function RequireRole({ role, children }: { role: string; children: React.ReactNode }) {
   const user = useSelector((state: RootState) => state.auth.user);
   if (!user) return <Navigate to="/login" replace />;
   if (role === 'admin' && user.role !== 'admin') return <Navigate to="/" replace />;
   if (role === 'seller' && user.role !== 'seller' && user.role !== 'admin') return <Navigate to="/" replace />;
   return <>{children}</>;
+}
+
+function PlaceholderPage({ title }: { title: string }) {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center py-20 min-h-[60vh]">
+      <div className="bg-white p-10 rounded-sm shadow-sm text-center max-w-md w-full mx-4 border-t-4 border-[#2874f0]">
+        <div className="text-5xl mb-4">🚧</div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">{title}</h2>
+        <p className="text-gray-500 text-sm">This page is under construction or not fully implemented in this clone.</p>
+      </div>
+    </div>
+  );
 }
 
 function App() {
@@ -105,12 +126,37 @@ function App() {
           <main className="flex-1 w-full">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/aw-base-new-inline-2025-at-store" element={<Home />} />
+              <Route path="/mobile-phones-sasa-lele-2026-ab-inline-at-store" element={<Home />} />
+              <Route path="/bpc-bau-new-inline-at-store" element={<Home />} />
+              <Route path="/new-elec-clp-march-at-store" element={<Home />} />
+              <Route path="/home-kitchen-25-at-store" element={<Home />} />
+              <Route path="/tv-and-appliances-inline-ab-at-store" element={<Home />} />
+              <Route path="/toys-baby-2025-new-at-store" element={<Home />} />
+              <Route path="/fnhc-2025-new-at-store" element={<Home />} />
+              <Route path="/aa-2025-new-at-store" element={<Home />} />
+              <Route path="/twowheelers-at-store" element={<Home />} />
+              <Route path="/sf-inline-2025-at-store" element={<Home />} />
+              <Route path="/booksmedia-2025-at-store" element={<Home />} />
+              <Route path="/india-ka-furniture-studio-inlines-at-store" element={<Home />} />
               <Route path="/profile" element={<><Navbar /><Profile /><Footer /></>} />
               <Route path="/product/:id" element={<><Navbar /><ProductDetails /><Footer /></>} />
               <Route path="/cart" element={<><Navbar /><Cart /><Footer /></>} />
               <Route path="/checkout" element={<><Navbar /><Checkout /><Footer /></>} />
               <Route path="/wishlist" element={<><Navbar /><Wishlist /><Footer /></>} />
               <Route path="/orders" element={<><Navbar /><Orders /><Footer /></>} />
+              
+              {/* Dropdown links */}
+              <Route path="/rewards" element={<><Navbar /><Rewards /><Footer /></>} />
+              <Route path="/gift-cards" element={<><Navbar /><GiftCards /><Footer /></>} />
+              <Route path="/notifications" element={<><Navbar /><Notifications /><Footer /></>} />
+              <Route path="/plus" element={<><Navbar /><PlusZone /><Footer /></>} />
+              <Route path="/help" element={<><Navbar /><HelpCenter /><Footer /></>} />
+              <Route path="/advertise" element={<><Navbar /><Advertise /><Footer /></>} />
+              <Route path="/app" element={<><Navbar /><DownloadApp /><Footer /></>} />
+              
+              {/* Catch-all for other missing routes */}
+              <Route path="*" element={<><Navbar /><PlaceholderPage title="Page Not Found" /><Footer /></>} />
             </Routes>
           </main>
         </div>

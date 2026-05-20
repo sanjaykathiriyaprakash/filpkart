@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Star, Heart, ChevronLeft, ChevronDown, Search as SearchIcon } from 'lucide-react';
+import { Star, Heart } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { API_BASE, buildProductsQuery } from '../lib/api';
+import { buildProductsQuery } from '../lib/api';
 import BrandDirectory from '../components/BrandDirectory';
 import ProductFilters, { type ProductFilterState } from '../components/ProductFilters';
 

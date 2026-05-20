@@ -482,12 +482,20 @@ export default function Navbar() {
                                 <div className="absolute right-0 top-[calc(100%+8px)] w-52 bg-white rounded-md shadow-xl z-50 border border-gray-100 py-1 before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2">
                                     {/* Triangle pointer */}
                                     <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white transform rotate-45 border-l border-t border-gray-100"></div>
-                                    {MORE_MENU.map(item => (
-                                        <Link key={item.label} to={item.path} onClick={() => setMoreOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors text-gray-700 relative z-10 bg-white">
-                                            <span>{item.icon}</span><span>{item.label}</span>
-                                        </Link>
-                                    ))}
+                                    {MORE_MENU.map(item => {
+                                        const isExternal = item.path.startsWith('http');
+                                        return isExternal ? (
+                                            <a key={item.label} href={item.path} onClick={() => setMoreOpen(false)}
+                                                className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors text-gray-700 relative z-10 bg-white">
+                                                <span>{item.icon}</span><span>{item.label}</span>
+                                            </a>
+                                        ) : (
+                                            <Link key={item.label} to={item.path} onClick={() => setMoreOpen(false)}
+                                                className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors text-gray-700 relative z-10 bg-white">
+                                                <span>{item.icon}</span><span>{item.label}</span>
+                                            </Link>
+                                        );
+                                    })}
                                 </div>
                             )}
                         </div>
