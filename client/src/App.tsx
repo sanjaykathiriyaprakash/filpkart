@@ -23,6 +23,15 @@ import AdminCoupons from './pages/admin/AdminCoupons';
 import AdminBanners from './pages/admin/AdminBanners';
 import AdminInventory from './pages/admin/AdminInventory';
 import AdminReports from './pages/admin/AdminReports';
+import AdminCategories from './pages/admin/AdminCategories';
+import AdminPayments from './pages/admin/AdminPayments';
+import AdminReturns from './pages/admin/AdminReturns';
+import AdminCustomers from './pages/admin/AdminCustomers';
+import AdminMarketing from './pages/admin/AdminMarketing';
+import AdminCms from './pages/admin/AdminCms';
+import AdminNotifications from './pages/admin/AdminNotifications';
+import AdminSettings from './pages/admin/AdminSettings';
+import AdminLogs from './pages/admin/AdminLogs';
 // Seller pages
 import SellerDashboard from './pages/seller/SellerDashboard';
 import SellerProducts from './pages/seller/SellerProducts';
@@ -36,6 +45,12 @@ import SellerOrders from './pages/seller/SellerOrders';
 import SellerInventory from './pages/seller/SellerInventory';
 import SellerProfile from './pages/seller/SellerProfile';
 import SellerEditProduct from './pages/seller/SellerEditProduct';
+import SellerReports from './pages/seller/SellerReports';
+import SellerGrowth from './pages/seller/SellerGrowth';
+import SellerAdvertising from './pages/seller/SellerAdvertising';
+import SellerPartners from './pages/seller/SellerPartners';
+import SellerQuestions from './pages/seller/SellerQuestions';
+import SellerHelp from './pages/seller/SellerHelp';
 
 // Dropdown pages
 import Rewards from './pages/Rewards';
@@ -83,6 +98,15 @@ function App() {
       <Route path="/admin/banners" element={<RequireRole role="admin"><AdminBanners /></RequireRole>} />
       <Route path="/admin/inventory" element={<RequireRole role="admin"><AdminInventory /></RequireRole>} />
       <Route path="/admin/reports" element={<RequireRole role="admin"><AdminReports /></RequireRole>} />
+      <Route path="/admin/categories" element={<RequireRole role="admin"><AdminCategories /></RequireRole>} />
+      <Route path="/admin/payments" element={<RequireRole role="admin"><AdminPayments /></RequireRole>} />
+      <Route path="/admin/returns" element={<RequireRole role="admin"><AdminReturns /></RequireRole>} />
+      <Route path="/admin/customers" element={<RequireRole role="admin"><AdminCustomers /></RequireRole>} />
+      <Route path="/admin/marketing" element={<RequireRole role="admin"><AdminMarketing /></RequireRole>} />
+      <Route path="/admin/cms" element={<RequireRole role="admin"><AdminCms /></RequireRole>} />
+      <Route path="/admin/notifications" element={<RequireRole role="admin"><AdminNotifications /></RequireRole>} />
+      <Route path="/admin/settings" element={<RequireRole role="admin"><AdminSettings /></RequireRole>} />
+      <Route path="/admin/logs" element={<RequireRole role="admin"><AdminLogs /></RequireRole>} />
 
       {/* Seller routes */}
       <Route path="/seller" element={<RequireRole role="seller"><SellerDashboard /></RequireRole>} />
@@ -95,6 +119,12 @@ function App() {
       <Route path="/seller/orders" element={<RequireRole role="seller"><SellerOrders /></RequireRole>} />
       <Route path="/seller/inventory" element={<RequireRole role="seller"><SellerInventory /></RequireRole>} />
       <Route path="/seller/profile" element={<RequireRole role="seller"><SellerProfile /></RequireRole>} />
+      <Route path="/seller/reports" element={<RequireRole role="seller"><SellerReports /></RequireRole>} />
+      <Route path="/seller/growth" element={<RequireRole role="seller"><SellerGrowth /></RequireRole>} />
+      <Route path="/seller/advertising" element={<RequireRole role="seller"><SellerAdvertising /></RequireRole>} />
+      <Route path="/seller/partners" element={<RequireRole role="seller"><SellerPartners /></RequireRole>} />
+      <Route path="/seller/questions" element={<RequireRole role="seller"><SellerQuestions /></RequireRole>} />
+      <Route path="/seller/help" element={<RequireRole role="seller"><SellerHelp /></RequireRole>} />
 
       {/* Login & Register — show blue navbar */}
       <Route path="/login" element={
